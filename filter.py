@@ -20,7 +20,7 @@ def filter_writeups(feed, ctf_list):
             if not ctfnames_regex.search(title):
                 channel.remove(item)
 
-        return ElementTree.tostring(et, encoding='unicode', method='xml')
+        return ElementTree.tostring(et, encoding = 'unicode', method = 'xml', xml_declaration = True)
     except FilterException:
         raise
     except Exception as e:
