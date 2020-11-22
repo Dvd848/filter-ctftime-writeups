@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, render_template
 from enum import Enum
 from flask.logging import create_logger
 from filter import filter_writeups, FilterException
@@ -35,7 +35,7 @@ def writeups():
 
 @app.route('/')
 def index():
-    return "<h1>Hello World!</h1>"
+    return render_template('index.html', title='CTFTime Writeups')
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', threaded = True, port = 5000)
