@@ -1,5 +1,5 @@
 from defusedxml import ElementTree
-from filter import filter_writeups
+from filter import filter_writeups, FilterException
 from typing import List
 
 import unittest
@@ -212,6 +212,31 @@ class TestFilter(unittest.TestCase):
         output = WriteupsRssFeed.from_xml_string(filter_writeups(str(feed), ["OtherCTF", "NewCTF"]))
         self.assertEqual(expected_feed, output)
 
+    def test_single_item_exists_middle_of_name(self):
+        ctf_name = "My First CTF"
+        feed = WriteupsRssFeed.from_item_list([_generate_rss_item(ctf_name)])
+        output = WriteupsRssFeed.from_xml_string(filter_writeups(str(feed), ["First"]))
+        self.assertEqual(feed, output)
+
+    def test_single_item_case_insensitive(self):
+        ctf_name = "MyCTF"
+        feed = WriteupsRssFeed.from_item_list([_generate_rss_item(ctf_name)])
+        output = WriteupsRssFeed.from_xml_string(filter_writeups(str(feed), [ctf_name.lower()]))
+        self.assertEqual(feed, output)
+
+    def test_special_regex_characters(self):
+        items_to_be_removed = [_generate_rss_item("CTF"), _generate_rss_item("Other"), _generate_rss_item("MyCTF")]
+        items_to_remain = [_generate_rss_item("Other|CTF")]
+        item_list = items_to_be_removed + items_to_remain
+        feed = WriteupsRssFeed.from_item_list(item_list)
+        expected_feed = WriteupsRssFeed.from_item_list(items_to_remain)
+        output = WriteupsRssFeed.from_xml_string(filter_writeups(str(feed), ["Other|CTF"]))
+        self.assertEqual(expected_feed, output)
+
+    def test_invalid_xml(self):
+        xml = "NotXML"
+        with self.assertRaises(FilterException):
+            filter_writeups(xml, ["Test"])
 
 if __name__ == '__main__':
     unittest.main()
