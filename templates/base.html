@@ -4,10 +4,6 @@
 <head>
     <meta charset="utf-8"/>
     <title>{{ title }}</title>
-</head>
-
-<body>
-    {% block content %}{% endblock %}
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
@@ -33,5 +29,14 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
     </script>
+
+    <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+
+</head>
+
+<body>
+    {% block content %}{% endblock %}
+
 </body>
 </html>

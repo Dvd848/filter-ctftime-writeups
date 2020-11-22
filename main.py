@@ -37,5 +37,9 @@ def writeups():
 def index():
     return render_template('index.html', title='CTFTime Writeups')
 
+@app.route('/login')
+def login():
+    return render_template('login.html', title='Login')
+
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', threaded = True, port = 5000)
