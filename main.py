@@ -1,7 +1,7 @@
 from flask import Flask, Response, render_template
 from enum import Enum
 from flask.logging import create_logger
-from filter import filter_writeups, FilterException
+import filter
 import requests
 
 class HttpStatus(Enum):
@@ -9,15 +9,21 @@ class HttpStatus(Enum):
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
+filter.init()
 
-@app.route("/writeups")
-def writeups():
+@app.route("/writeups/<string:uid>")
+def writeups(uid):
     try:
+        if not filter.is_valid_uid(uid):
+            raise ValueError(f"Invalid UID: {uid}")
+
         headers = {
             'User-Agent': 'CTFTime Writeups Filter 1.0',
         }
         r = requests.get("https://ctftime.org/writeups/rss/", headers = headers)
-        content = filter_writeups(r.text, ["Ledger"])
+
+        ctf_names = filter.get_ctf_names(uid)
+        content = filter.filter_writeups(r.text, ctf_names)
 
         res = Response(
             response = content,
@@ -27,7 +33,7 @@ def writeups():
     except Exception as e:
         logger.error(e)
         res = Response(
-            status = HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR
+            status = HttpStatus.HTTP_500_INTERNAL_SERVER_ERROR.value
         )
     
     return res

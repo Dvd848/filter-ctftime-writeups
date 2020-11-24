@@ -2,4 +2,32 @@
 
 {% block content %}
     <h1>Hello World!</h1>
+    <div id="info"></div>
+
+<script>
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) 
+    {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        var uid = user.uid;
+        firebase.database().ref('data/' + uid).set({
+            ctf_names: "Ledger" + "␞" + "JISCTF"
+        });
+        //https://www.fileformat.info/info/unicode/char/241e/browsertest.htm
+
+        firebase.database().ref(`/data/${uid}/ctf_names`).once('value').then((snapshot) => {
+            var ctf_names = snapshot.val();
+            document.getElementById("info").innerText = `Signed in as ${user.email} (CTF Names: ${ctf_names.split("␞")})`;
+        });
+    } else {
+        // User is signed out
+        // ...
+        document.getElementById("info").innerText = "Not signed in";
+    }
+});
+// Get a reference to the database service
+//var userId = firebase.auth().currentUser.uid;
+
+</script>
 {% endblock %}

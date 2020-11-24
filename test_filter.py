@@ -90,6 +90,9 @@ class WriteupsRssFeed(object):
         if len(channel) != len(self._FIELDS):
             raise ValueError(f"WriteupsRssFeed channel must contain {self._FIELDS} and only them")
         self.channel = channel
+
+        if not all(isinstance(x, WriteupsRssItem) for x in items):
+            raise ValueError("WriteupsRssFeed items must contain WriteupsRssItem instances")
         self.items = items
 
     @classmethod
@@ -169,11 +172,21 @@ class TestWriteupsRssFeed(unittest.TestCase):
         b = WriteupsRssFeed.from_item_list([_generate_rss_item("OtherCTF")])
         self.assertNotEqual(a, b)
 
+    def test_feed_from_non_items(self):
+        with self.assertRaises(ValueError):
+            WriteupsRssFeed.from_item_list(["MyCTF"])
+
 class TestFilter(unittest.TestCase):
     def test_empty_feed(self):
         feed = WriteupsRssFeed.from_item_list([])
         output = WriteupsRssFeed.from_xml_string(filter_writeups(str(feed), []))
         self.assertEqual(feed, output)
+
+    def test_empty_filter(self):
+        empty_feed = WriteupsRssFeed.from_item_list([])
+        non_empty_feed = WriteupsRssFeed.from_item_list([_generate_rss_item("MyCTF")])
+        output = WriteupsRssFeed.from_xml_string(filter_writeups(str(non_empty_feed), []))
+        self.assertEqual(empty_feed, output)
 
     def test_single_item_exists(self):
         ctf_name = "MyCTF"

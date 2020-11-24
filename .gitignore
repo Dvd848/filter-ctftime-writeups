@@ -1,3 +1,4 @@
 venv/
 .vscode/
 *.pyc
+private_key.json
