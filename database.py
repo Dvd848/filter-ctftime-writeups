@@ -1,4 +1,5 @@
 import os
+import re
 import base64
 import json
 
@@ -7,8 +8,6 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 from typing import List
-
-MAX_CTF_ENTRIES = 20
 
 class DatabaseException(Exception):
     pass
@@ -23,16 +22,15 @@ def _get_private_key():
             return private_key_file
         raise DatabaseException("Can't find private key")
 
+_INVALID_KEY_CHARS = re.compile(r"[\.\$#\[\]/\x00-\x1f\x7f]")
 
-def init():
-    cred = credentials.Certificate(_get_private_key())
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://ctftime-writeups.firebaseio.com'
-    })
+def _is_legal_key(key: str):
+    # https://firebase.google.com/docs/database/web/structure-data#how_data_is_structured_its_a_json_tree
+    return not _INVALID_KEY_CHARS.search(key)
 
 def get_ctf_names(uid: str) -> List[str]:
-    if not is_valid_uid(uid):
-        raise ValueError(f"Invalid user ID: {uid}")
+    if not _is_legal_key(uid):
+        raise ValueError(f"Invalid DB key: {uid}")
     
     ref = db.reference(f'data/{uid}/ctf_names')
     ctf_names = ref.get()
@@ -41,11 +39,10 @@ def get_ctf_names(uid: str) -> List[str]:
 
     res = ctf_names.split("␞")
 
-    if len(res) > MAX_CTF_ENTRIES:
-        raise DatabaseException(f"Too many entries for user {uid}: {res}")
-
     return res
 
 
-def is_valid_uid(uid):
-    return uid.isalnum()
+cred = credentials.Certificate(_get_private_key())
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://ctftime-writeups.firebaseio.com'
+})

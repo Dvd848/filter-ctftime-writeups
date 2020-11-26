@@ -2,7 +2,7 @@ from flask import Flask, Response, render_template
 from enum import Enum
 from flask.logging import create_logger
 import filter
-import database
+from user import User
 import requests
 
 class HttpStatus(Enum):
@@ -10,21 +10,18 @@ class HttpStatus(Enum):
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
-database.init()
 
 @app.route("/writeups/<string:uid>")
 def writeups(uid):
     try:
-        if not database.is_valid_uid(uid):
-            raise ValueError(f"Invalid UID: {uid}")
+        user = User(uid)
 
         headers = {
             'User-Agent': 'CTFTime Writeups Filter 1.0',
         }
         r = requests.get("https://ctftime.org/writeups/rss/", headers = headers)
 
-        ctf_names = database.get_ctf_names(uid)
-        content = filter.filter_writeups(r.text, ctf_names)
+        content = filter.filter_writeups(r.text, user.ctf_list)
 
         res = Response(
             response = content,
