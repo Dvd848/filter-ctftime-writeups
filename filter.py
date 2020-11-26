@@ -2,20 +2,8 @@ from defusedxml import ElementTree
 from typing import List
 import re
 
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-
-MAX_CTF_ENTRIES = 20
-
 class FilterException(Exception):
     pass
-
-def init():
-    cred = credentials.Certificate("private_key.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://ctftime-writeups.firebaseio.com'
-    })
 
 def filter_writeups(feed: str, ctf_list: List[str]) -> str:
     try:
@@ -45,22 +33,3 @@ def filter_writeups(feed: str, ctf_list: List[str]) -> str:
     except Exception as e:
         raise FilterException("Failed to filter XML") from e
 
-def get_ctf_names(uid: str) -> List[str]:
-    if not is_valid_uid(uid):
-        raise ValueError(f"Invalid user ID: {uid}")
-    
-    ref = db.reference(f'data/{uid}/ctf_names')
-    ctf_names = ref.get()
-    if ctf_names is None:
-        raise FilterException(f"Unknown user: {uid}")
-
-    res = ctf_names.split("␞")
-
-    if len(res) > MAX_CTF_ENTRIES:
-        raise FilterException(f"Too many entries for user {uid}: {res}")
-
-    return res
-
-
-def is_valid_uid(uid):
-    return uid.isalnum()
