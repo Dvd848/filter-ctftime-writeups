@@ -140,7 +140,7 @@ body {
  * Custom
  */
 
-#login {
+#login, #filter {
    display: none;
 }
 

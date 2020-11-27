@@ -3,14 +3,16 @@
 
 {% block content %}
     <h1>Filter the Feed</h1>
-    <p>
-        Enter the CTF Names you'd like to see in your feed.
-    </p>
-    <div class="rounded border border-light p-3 text-center" id="ctf_names_wrapper">
-        <div id="ctf_names">
-            <img src="{{ url_for('static',filename='images/ajax-loader.gif') }}" alt="Loading..." id="ajax_loader" />
+    <div id="filter">
+        <p>
+            Enter the CTF Names you'd like to see in your feed.
+        </p>
+        <div class="rounded border border-light p-3 text-center" id="ctf_names_wrapper">
+            <div id="ctf_names">
+                <img src="{{ url_for('static',filename='images/ajax-loader.gif') }}" alt="Loading..." id="ajax_loader" />
+            </div>
+            <button class="btn btn-primary" id="add_button">+</button>
         </div>
-        <button class="btn btn-primary" id="add_button">+</button>
     </div>
     
     <div id="info"></div>
@@ -33,6 +35,7 @@ firebase.auth().onAuthStateChanged((user) => {
             ctf_names: "Ledger" + "␞" + "JISCTF"
         });
         */
+        $("#filter").show();
 
         firebase.database().ref(`/data/${uid}/ctf_names`).once('value').then((snapshot) => {
             $("#ajax_loader").remove();
@@ -78,6 +81,7 @@ firebase.auth().onAuthStateChanged((user) => {
 
             show_hide_add_button();
             
+            
         });
     } 
     else 
@@ -92,7 +96,8 @@ firebase.auth().onAuthStateChanged((user) => {
                     // User successfully signed in.
                     // Return type determines whether we continue the redirect automatically
                     // or whether we leave that to developer to handle.
-                    return true;
+                    $("#login").hide();
+                    return false;
                 },
                 uiShown: function() 
                 {
@@ -103,7 +108,7 @@ firebase.auth().onAuthStateChanged((user) => {
             },
             // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
             //signInFlow: 'popup',
-            signInSuccessUrl: '/filter',
+            //signInSuccessUrl: '/filter',
             signInOptions: [
                 firebase.auth.EmailAuthProvider.PROVIDER_ID,
             ],
@@ -116,7 +121,7 @@ firebase.auth().onAuthStateChanged((user) => {
         const ui = new firebaseui.auth.AuthUI(firebase.auth());
         ui.start('#firebaseui-auth-container', uiConfig);
 
-        $("#login").show()
+        $("#login").show();
     }
 });
 
