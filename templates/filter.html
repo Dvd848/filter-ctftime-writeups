@@ -102,10 +102,9 @@ firebase.auth().onAuthStateChanged((user) => {
                 uiShown: function() 
                 {
                     // The widget is rendered.
-                    // Hide the loader.
-                    document.getElementById('loader').style.display = 'none';
                 }
             },
+            'credentialHelper': firebaseui.auth.CredentialHelper.NONE,
             // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
             //signInFlow: 'popup',
             //signInSuccessUrl: '/filter',
@@ -118,10 +117,11 @@ firebase.auth().onAuthStateChanged((user) => {
             //privacyPolicyUrl: '<your-privacy-policy-url>'
         };
 
+        $("#login").show();
+
         const ui = new firebaseui.auth.AuthUI(firebase.auth());
         ui.start('#firebaseui-auth-container', uiConfig);
-
-        $("#login").show();
+        
     }
 });
 
