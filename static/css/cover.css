@@ -39,8 +39,7 @@ html,
 body {
   height: 100%;
   /*background-color: #333;*/
-  background: rgb(2,0,36);
-  background: linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);
+  
 }
 
 body {
@@ -49,6 +48,9 @@ body {
   color: #fff;
   text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
   box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+  background: rgb(2,0,36);
+  background: linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);
+  
 }
 
 .cover-container {
@@ -132,4 +134,25 @@ body {
   .bd-placeholder-img-lg {
     font-size: 3.5rem;
   }
+}
+
+/*
+ * Custom
+ */
+
+#login {
+   display: none;
+}
+
+#add_button {
+  display: none;
+  /*float: right;*/
+  margin: 10px auto;
+  width: 30%;
+  
+}
+
+#ctf_names_wrapper {
+  max-height: 50vh;
+  overflow-y: auto;
 }
