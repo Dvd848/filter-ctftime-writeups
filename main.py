@@ -38,11 +38,15 @@ def writeups(uid):
 
 
 @app.route('/')
-def index():
-    return render_template('index.html', title='CTFTime Writeups')
+def index_page():
+    return render_template('index.html', title='Writeup Feed Filter')
+
+@app.route('/filter')
+def filter_page():
+    return render_template('filter.html', title='Writeup Feed Filter')
 
 @app.route('/login')
-def login():
+def login_page():
     return render_template('login.html', title='Login')
 
 if __name__ == '__main__':
