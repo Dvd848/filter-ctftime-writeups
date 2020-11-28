@@ -48,3 +48,22 @@ cred = credentials.Certificate(_get_private_key())
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://ctftime-writeups.firebaseio.com'
 })
+
+
+# Realtime Database Rules:
+"""
+{
+  "rules": {
+    "data" : {
+          "$uid" : {
+             ".read" : "auth != null && auth.uid == $uid" ,
+             ".write" : "auth != null && auth.uid == $uid",
+             "ctf_names": {
+             			".validate": "newData.isString() && newData.val().length < 620"
+             },
+             "$other": { ".validate": false }
+           }
+      }
+  }
+}
+"""
