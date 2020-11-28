@@ -16,7 +16,6 @@
     </div>
     
     <div id="login">
-        <p>In order to proceed you must register or sign-in via the following form:</p>
         <div id="firebaseui-auth-container"></div>
     </div>
 
@@ -104,6 +103,7 @@ firebase.auth().onAuthStateChanged((user) => {
                 uiShown: function() 
                 {
                     // The widget is rendered.
+                    $(".firebaseui-title").text("Sign in / Sign up with email")
                 }
             },
             'credentialHelper': firebaseui.auth.CredentialHelper.NONE,
