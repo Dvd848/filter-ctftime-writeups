@@ -15,8 +15,6 @@
         </div>
     </div>
     
-    <div id="info"></div>
-
     <div id="login">
         <p>In order to proceed you must register or sign-in via the following form:</p>
         <div id="firebaseui-auth-container"></div>
@@ -36,14 +34,15 @@ firebase.auth().onAuthStateChanged((user) => {
         });
         */
         $("#filter").show();
+        $("#login").hide();
 
         firebase.database().ref(`/data/${uid}/ctf_names`).once('value').then((snapshot) => {
-            $("#ajax_loader").remove();
+            $("#ajax_loader").hide();
 
-            const ctf_names = snapshot.val().split("␞");
+            const ctf_names = snapshot.val()?.split("␞") || [];
 
             const create_input_wrapper = function(){ 
-                const input_wrapper = $(`<div class="input-group mb-3">
+                const input_wrapper = $(`<div class="input-group mb-3 ctf_name_entry">
                     <input type="text" class="form-control ctf_name_input" placeholder="CTF Name" aria-label="CTF Name" aria-describedby="basic-addon2">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary btn-danger text-white remove_ctf_name" type="button">🗙</button>
@@ -62,14 +61,17 @@ firebase.auth().onAuthStateChanged((user) => {
                 $("#ctf_names").append(input_wrapper);
             });
 
+            if (ctf_names.length == 0)
+            {
+                $("#ctf_names").append(create_input_wrapper());
+            }
+
             const ctf_names_wrapper = $("#ctf_names_wrapper");
             const add_button = $('#add_button');
             add_button.click(function(){
                 const input_wrapper = create_input_wrapper();
                 $("#ctf_names").append(input_wrapper);
-                $('body').css({
-                    background: "linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);" 
-                });
+                
                 show_hide_add_button();
                 
                 ctf_names_wrapper.scrollTop(ctf_names_wrapper.prop("scrollHeight"));
@@ -109,7 +111,10 @@ firebase.auth().onAuthStateChanged((user) => {
             //signInFlow: 'popup',
             //signInSuccessUrl: '/filter',
             signInOptions: [
-                firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                {
+                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                    requireDisplayName: false
+                }
             ],
             // Terms of service url.
             //tosUrl: '<your-tos-url>',
@@ -117,9 +122,12 @@ firebase.auth().onAuthStateChanged((user) => {
             //privacyPolicyUrl: '<your-privacy-policy-url>'
         };
 
+        $("#filter").hide();
         $("#login").show();
+        $("#ajax_loader").show();
+        $("#filter .ctf_name_entry").remove();
 
-        const ui = new firebaseui.auth.AuthUI(firebase.auth());
+        const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
         ui.start('#firebaseui-auth-container', uiConfig);
         
     }

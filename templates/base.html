@@ -83,7 +83,8 @@
             signout_link = $( "<a href='javascript:void(0)' class='nav-link'>Sign Out</a>" )
             signout_link.click(function() {
                 firebase.auth().signOut().then(function() {
-                    document.location.href = "/";
+                    //document.location.href = "/";
+                    signout_link.remove();
                 }).catch(function(error) {
                     console.log(error);
                 });
