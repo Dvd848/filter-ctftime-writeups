@@ -46,7 +46,10 @@ def get_ctf_names(uid: str) -> List[str]:
 
 cred = credentials.Certificate(_get_private_key())
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://ctftime-writeups.firebaseio.com'
+    'databaseURL': 'https://ctftime-writeups.firebaseio.com',
+    'databaseAuthVariableOverride': {
+        'uid': 'feed-reader'
+    }
 })
 
 
@@ -57,7 +60,7 @@ MAX_CTF_NAMES_LENGTH = 620 # Needs to be kept in sync with Realtime Database Rul
   "rules": {
     "data" : {
           "$uid" : {
-             ".read" : "auth != null && auth.uid == $uid" ,
+             ".read" : "auth != null && (auth.uid == $uid || auth.uid === 'feed-reader')" ,
              ".write" : "auth != null && auth.uid == $uid",
              "ctf_names": {
              			".validate": "newData.isString() && newData.val().length < 620"
@@ -66,5 +69,4 @@ MAX_CTF_NAMES_LENGTH = 620 # Needs to be kept in sync with Realtime Database Rul
            }
       }
   }
-}
 """
