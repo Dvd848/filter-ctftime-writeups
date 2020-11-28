@@ -64,7 +64,8 @@
     <!-- ============================ End Logged out content ============================ -->
 
 <script>
-const MAX_CTF_ENTRIES = parseInt('{{ max_ctf_entries }}');
+const MAX_CTF_ENTRIES    = parseInt('{{ max_ctf_entries }}');
+const MAX_ENTRY_NAME_LEN = parseInt('{{ max_entry_name_len }}');
 const ENTRY_SEPARATOR = '{{ entry_separator }}';
 firebase.auth().onAuthStateChanged((user) => {
     if (user) 
@@ -82,10 +83,13 @@ firebase.auth().onAuthStateChanged((user) => {
             $("#ajax_loader").hide();
 
             const ctf_names = snapshot.val()?.split(ENTRY_SEPARATOR) || [];
+            ctf_names.length = Math.min(ctf_names.length, MAX_CTF_ENTRIES); 
 
             const create_input_wrapper = function(){ 
-                const input_wrapper = $(`<div class="input-group mb-3 ctf_name_entry">
-                    <input type="text" class="form-control ctf_name_input" placeholder="CTF Name" aria-label="CTF Name" aria-describedby="basic-addon2">
+                const input_wrapper = $(`
+                <div class="input-group mb-3 ctf_name_entry">
+                    <input type="text" class="form-control ctf_name_input" maxlength="${MAX_ENTRY_NAME_LEN}"
+                            placeholder="CTF Name" aria-label="CTF Name" aria-describedby="basic-addon2">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary btn-danger text-white remove_ctf_name" type="button">🗙</button>
                     </div>

@@ -50,6 +50,7 @@ firebase_admin.initialize_app(cred, {
 })
 
 
+MAX_CTF_NAMES_LENGTH = 620 # Needs to be kept in sync with Realtime Database Rules
 # Realtime Database Rules:
 """
 {

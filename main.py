@@ -1,7 +1,7 @@
 from flask import Flask, Response, render_template
 from enum import Enum
 from flask.logging import create_logger
-from user import User, MAX_CTF_ENTRIES
+from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
 from database import ENTRY_SEPARATOR
 import filter
 import requests
@@ -44,7 +44,10 @@ def index_page():
 
 @app.route('/filter')
 def filter_page():
-    return render_template('filter.html', title='Writeup Feed Filter', max_ctf_entries = MAX_CTF_ENTRIES, entry_separator = ENTRY_SEPARATOR)
+    return render_template('filter.html',   title='Writeup Feed Filter', 
+                                            max_ctf_entries = MAX_CTF_ENTRIES, 
+                                            entry_separator = ENTRY_SEPARATOR,
+                                            max_entry_name_len = MAX_ENTRY_NAME_LEN)
 
 @app.route('/login')
 def login_page():

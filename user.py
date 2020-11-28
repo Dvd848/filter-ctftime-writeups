@@ -1,7 +1,9 @@
 from typing import List
 import database
 
-MAX_CTF_ENTRIES = 20
+MAX_CTF_ENTRIES = 10
+
+MAX_ENTRY_NAME_LEN = (database.MAX_CTF_NAMES_LENGTH - MAX_CTF_ENTRIES) // MAX_CTF_ENTRIES
 
 class User(object):
     def __init__(self, user_id: str):
