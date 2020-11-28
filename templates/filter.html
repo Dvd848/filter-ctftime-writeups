@@ -150,7 +150,7 @@ firebase.auth().onAuthStateChanged((user) => {
                 $(".ctf_name_entry").each(function(index, elem) {
                     const element = $(elem);
                     const name = element.find(".ctf_name_input").val();
-                    if (name.trim() != "")
+                    if ( (name.trim() != "") && (!ctf_names_arr.includes(name)) )
                     {
                         ctf_names_arr.push(name);
                     }
