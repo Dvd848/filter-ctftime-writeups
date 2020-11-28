@@ -9,6 +9,8 @@ from firebase_admin import db
 
 from typing import List
 
+ENTRY_SEPARATOR = "␞"
+
 class DatabaseException(Exception):
     pass
 
@@ -37,7 +39,7 @@ def get_ctf_names(uid: str) -> List[str]:
     if ctf_names is None:
         raise DatabaseException(f"Unknown user: {uid}")
 
-    res = ctf_names.split("␞")
+    res = ctf_names.split(ENTRY_SEPARATOR)
 
     return res
 

@@ -8,7 +8,7 @@
     <h1>Filter the Writeups Feed</h1>
     <div id="filter">
         <p>
-            Enter the CTF Event Names you'd like to see in your feed.
+            Enter the CTF Event Names you'd like to see in your feed. Entries are case-insensitive.
         </p>
         <div class="rounded border border-light p-3 m-3 text-center" id="ctf_names_wrapper">
             <div id="ctf_names">
@@ -61,19 +61,14 @@
     <!-- ============================ End Logged out content ============================ -->
 
 <script>
-const MAX_CTF_NAMES = 20;
-const ENTRY_SEPARATOR = "␞";
+const MAX_CTF_ENTRIES = parseInt('{{ max_ctf_entries }}');
+const ENTRY_SEPARATOR = '{{ entry_separator }}';
 firebase.auth().onAuthStateChanged((user) => {
     if (user) 
     {
         // User is signed in
 
         const uid = user.uid;
-        /*
-        firebase.database().ref('data/' + uid).set({
-            ctf_names: "Ledger" + "␞" + "JISCTF"
-        });
-        */
 
         $("#rss_feed").val(`${window.location.origin}/writeups/${uid}`)
 
@@ -122,7 +117,7 @@ firebase.auth().onAuthStateChanged((user) => {
             });
 
             const show_hide_add_button = function() {
-                ($(".ctf_name_input").length < MAX_CTF_NAMES) ? add_button.show() : add_button.hide();   
+                ($(".ctf_name_input").length < MAX_CTF_ENTRIES) ? add_button.show() : add_button.hide();   
             };
 
             show_hide_add_button();
