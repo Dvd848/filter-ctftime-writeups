@@ -145,8 +145,17 @@ firebase.auth().onAuthStateChanged((user) => {
             
             $('#save_button').click(function(){
                 const ctf_names_arr = [];
-                $(".ctf_name_input").each(function(index, elem) {
-                    ctf_names_arr.push($(elem).val());
+                $(".ctf_name_entry").each(function(index, elem) {
+                    const element = $(elem);
+                    const name = element.find(".ctf_name_input").val();
+                    if (name.trim() != "")
+                    {
+                        ctf_names_arr.push(name);
+                    }
+                    else
+                    {
+                        element.remove();
+                    }
                 });
                 const new_ctf_names = ctf_names_arr.join(ENTRY_SEPARATOR);
                 firebase.database().ref('data/' + uid).set({
