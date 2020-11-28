@@ -2,25 +2,67 @@
 {% set active_page = "filter" %}
 
 {% block content %}
-    <h1>Filter the Feed</h1>
+    
+    <!-- ============================ Start Logged in content ============================ -->
+
+    <h1>Filter the Writeups Feed</h1>
     <div id="filter">
         <p>
-            Enter the CTF Names you'd like to see in your feed.
+            Enter the CTF Event Names you'd like to see in your feed.
         </p>
-        <div class="rounded border border-light p-3 text-center" id="ctf_names_wrapper">
+        <div class="rounded border border-light p-3 m-3 text-center" id="ctf_names_wrapper">
             <div id="ctf_names">
                 <img src="{{ url_for('static',filename='images/ajax-loader.gif') }}" alt="Loading..." id="ajax_loader" />
             </div>
             <button class="btn btn-primary" id="add_button">+</button>
         </div>
+        <div class="m-3">
+            <button class="btn btn-success" id="save_button">Save</button>
+            
+            <div class="input-group" id="rss_feed_link">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">Your RSS Feed: </span>
+                  </div>
+                <input type="text" class="form-control" id="rss_feed" readonly>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary btn-success text-white" type="button" id="copy_rss_feed_link" data-content="Link Copied">📋</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="saveModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="saveModalLongTitle"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              ...
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- ============================ End Logged in content ============================ -->
+
+    <!-- ============================ Start Logged out content ============================ -->
     
     <div id="login">
         <div id="firebaseui-auth-container"></div>
     </div>
 
+    <!-- ============================ End Logged out content ============================ -->
+
 <script>
 const MAX_CTF_NAMES = 20;
+const ENTRY_SEPARATOR = "␞";
 firebase.auth().onAuthStateChanged((user) => {
     if (user) 
     {
@@ -32,13 +74,16 @@ firebase.auth().onAuthStateChanged((user) => {
             ctf_names: "Ledger" + "␞" + "JISCTF"
         });
         */
+
+        $("#rss_feed").val(`${window.location.origin}/writeups/${uid}`)
+
         $("#filter").show();
         $("#login").hide();
 
         firebase.database().ref(`/data/${uid}/ctf_names`).once('value').then((snapshot) => {
             $("#ajax_loader").hide();
 
-            const ctf_names = snapshot.val()?.split("␞") || [];
+            const ctf_names = snapshot.val()?.split(ENTRY_SEPARATOR) || [];
 
             const create_input_wrapper = function(){ 
                 const input_wrapper = $(`<div class="input-group mb-3 ctf_name_entry">
@@ -82,7 +127,47 @@ firebase.auth().onAuthStateChanged((user) => {
 
             show_hide_add_button();
             
+            $("#copy_rss_feed_link").click(function(){
+                const copyText = document.getElementById("rss_feed");
+                copyText.select();
+                copyText.setSelectionRange(0, $(copyText).val().length); // For mobile devices
+                document.execCommand("copy");
+            }).popover({ trigger: "manual", placement: "top" }).click(function() { 
+                var pop = $(this); 
+                pop.popover("show") 
+                pop.on('shown.bs.popover',function() { 
+                setTimeout(function() {
+                    pop.popover("hide")
+                }, 1000); 
+                });
+            });
+
             
+            $('#save_button').click(function(){
+                const ctf_names_arr = [];
+                $(".ctf_name_input").each(function(index, elem) {
+                    ctf_names_arr.push($(elem).val());
+                });
+                const new_ctf_names = ctf_names_arr.join(ENTRY_SEPARATOR);
+                firebase.database().ref('data/' + uid).set({
+                    ctf_names: new_ctf_names
+                }, (error) => {
+                    const modal = $("#saveModal")
+                    if (error) 
+                    {
+                        modal.find("#saveModalLongTitle").text("Error");
+                        modal.find(".modal-body").text("An error ocurred while trying to save your changes.");
+                    } 
+                    else 
+                    {
+                        modal.find("#saveModalLongTitle").text("Changes Saved");
+                        modal.find(".modal-body").text("Your changes were saved successfully. Your feed will reflect them automatically.");
+                    }
+                    modal.modal('show');
+                });
+            })
+            .show();
+
         });
     } 
     else 

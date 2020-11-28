@@ -20,16 +20,6 @@ a:hover {
   text-decoration: none;
 }
 
-/* Custom default button */
-.btn-secondary,
-.btn-secondary:hover,
-.btn-secondary:focus {
-  color: #333;
-  text-shadow: none; /* Prevent inheritance from `body` */
-  background-color: #fff;
-  border: .05rem solid #fff;
-}
-
 
 /*
  * Base structure
@@ -108,11 +98,10 @@ body {
 .cover {
   padding: 0 1.5rem;
 }
-.cover .btn-lg {
-  padding: .75rem 1.25rem;
-  font-weight: 700;
-}
 
+a.btn {
+  text-decoration: none;
+}
 
 /*
  * Footer
@@ -149,10 +138,26 @@ body {
   /*float: right;*/
   margin: 10px auto;
   width: 30%;
-  
 }
+
+#save_button {
+  /*float: left;*/
+  margin: 10px auto 30px auto;
+  width: 30%;
+}
+/*
+#rss_feed_link {
+  width: 85%;
+  float: right;
+}
+*/
 
 #ctf_names_wrapper {
   max-height: 50vh;
   overflow-y: auto;
+}
+
+.popover, .modal {
+  color: black;
+  text-shadow: none;
 }
