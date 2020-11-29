@@ -42,19 +42,20 @@ def writeups(uid):
 
 @app.route('/')
 def index_page():
-    return render_template('index.html', title = SITE_TITLE)
+    return render_template('index.html', title = SITE_TITLE, page_id = "index")
 
 @app.route('/login')
 def login_page():
-    return render_template('login.html', title = f"{SITE_TITLE}: Sign-up / Sign-in")
+    return render_template('login.html', title = f"{SITE_TITLE}: Sign-up / Sign-in", page_id = "login")
 
 @app.route('/tos')
 def tos_page():
-    return render_template('tos.html', title = f"{SITE_TITLE}: Terms &amp; Conditions")
+    return render_template('tos.html', title = f"{SITE_TITLE}: Terms &amp; Conditions", page_id = "tos")
 
 @app.route('/filter')
 def filter_page():
     return render_template('filter.html',   title = SITE_TITLE, 
+                                            page_id = "filter",
                                             max_ctf_entries = MAX_CTF_ENTRIES, 
                                             entry_separator = ENTRY_SEPARATOR,
                                             max_entry_name_len = MAX_ENTRY_NAME_LEN)

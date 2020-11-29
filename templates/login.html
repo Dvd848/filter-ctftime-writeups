@@ -3,55 +3,7 @@
 
 {% block content %}
     
-    <div id="login">
-        <div id="firebaseui-auth-container"></div>
-    </div>
+    <div id="firebaseui-auth-container"></div>
+    
 
-<script>
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) 
-    {
-        document.location.href = "/filter";
-    } 
-    else 
-    {
-        var uiConfig = 
-        {
-            callbacks: {
-                signInSuccessWithAuthResult: function(authResult, redirectUrl) 
-                {
-                    // User successfully signed in.
-                    // Return type determines whether we continue the redirect automatically
-                    // or whether we leave that to developer to handle.
-                    return true;
-                },
-                uiShown: function() 
-                {
-                    // The widget is rendered.
-                    $(".firebaseui-title").text("Sign in / Sign up with email")
-                }
-            },
-            'credentialHelper': firebaseui.auth.CredentialHelper.NONE,
-            // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-            //signInFlow: 'popup',
-            signInSuccessUrl: '/filter',
-            signInOptions: [
-                {
-                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                    requireDisplayName: false
-                }
-            ],
-            // Terms of service url.
-            tosUrl: '/tos',
-            // Privacy policy url.
-            //privacyPolicyUrl: '<your-privacy-policy-url>'
-        };
-
-        const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
-        ui.start('#firebaseui-auth-container', uiConfig);
-        
-    }
-});
-
-</script>
 {% endblock %}

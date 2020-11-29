@@ -18,6 +18,36 @@
 
     <link href="{{ url_for('static',filename='css/cover.css') }}" rel="stylesheet">
 
+    {% if page_id == "login" %}
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
+    {% endif %}
+
+</head>
+
+<body class="text-center" data-page-id="{{ page_id }}">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="masthead mb-auto">
+        <div class="inner">
+          <h3 class="masthead-brand">Writeup Feed Filter</h3>
+          <nav class="nav nav-masthead justify-content-center">
+            {% for href, id, caption in navigation_bar %}
+            <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}">{{ caption|e }}</a>
+            {% endfor %}
+          </nav>
+        </div>
+      </header>
+    
+      <main role="main" class="inner cover">
+          {% block content %}{% endblock %}
+      </main>
+    
+      <footer class="mastfoot mt-auto">
+        <div class="inner">
+          <p><a href="https://github.com/Dvd848/filter-ctftime-writeups">Fork on Github</a> | <a href="/tos">Terms of Service</a></p>
+        </div>
+      </footer>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 
     <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -46,55 +76,10 @@
     </script>
 
     <script src="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.js"></script>
-    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
-
-</head>
-
-<body class="text-center">
-    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand">Writeup Feed Filter</h3>
-          <nav class="nav nav-masthead justify-content-center">
-            {% for href, id, caption in navigation_bar %}
-            <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}">{{ caption|e }}</a>
-            {% endfor %}
-          </nav>
-        </div>
-      </header>
-    
-      <main role="main" class="inner cover">
-          {% block content %}{% endblock %}
-      </main>
-    
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          <p><a href="https://github.com/Dvd848/filter-ctftime-writeups">Fork on Github</a> | <a href="/tos">Terms of Service</a></p>
-        </div>
-      </footer>
-    </div>
-
-    <script>
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) 
-        {
-            // User is signed in
-
-            signout_link = $( "<a href='javascript:void(0)' class='nav-link'>Sign Out</a>" )
-            signout_link.click(function() {
-                firebase.auth().signOut().then(function() {
-                    //document.location.href = "/";
-                    signout_link.remove();
-                }).catch(function(error) {
-                    console.log(error);
-                });
-            });
-            $("header nav").append(signout_link)
-        }
-    });
-    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <script src="{{ url_for('static',filename='js/logic.js') }}"></script>
 
     <!-- Cover template for Bootstrap, by https://twitter.com/mdo -->
     <!-- https://getbootstrap.com/docs/4.5/examples/cover/ -->
