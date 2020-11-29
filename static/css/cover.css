@@ -136,8 +136,8 @@ a.btn {
  * Custom
  */
 
-#login, #filter {
-   display: none;
+#filter {
+  display: none;
 }
 
 #add_button {

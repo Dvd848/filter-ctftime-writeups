@@ -44,6 +44,10 @@ def writeups(uid):
 def index_page():
     return render_template('index.html', title = SITE_TITLE)
 
+@app.route('/login')
+def login_page():
+    return render_template('login.html', title = f"{SITE_TITLE}: Sign-up / Sign-in")
+
 @app.route('/tos')
 def tos_page():
     return render_template('tos.html', title = f"{SITE_TITLE}: Terms &amp; Conditions")

@@ -2,11 +2,9 @@
 {% set active_page = "filter" %}
 
 {% block content %}
-    
-    <!-- ============================ Start Logged in content ============================ -->
 
-    <h1>Filter the Writeups Feed</h1>
     <div id="filter">
+        <h1>Filter the Writeups Feed</h1>
         <p class="lead">
             Enter the CTF Event Names you'd like to see in your feed. 
         </p>
@@ -53,16 +51,6 @@
         </div>
     </div>
 
-    <!-- ============================ End Logged in content ============================ -->
-
-    <!-- ============================ Start Logged out content ============================ -->
-    
-    <div id="login">
-        <div id="firebaseui-auth-container"></div>
-    </div>
-
-    <!-- ============================ End Logged out content ============================ -->
-
 <script>
 const MAX_CTF_ENTRIES    = parseInt('{{ max_ctf_entries }}');
 const MAX_ENTRY_NAME_LEN = parseInt('{{ max_entry_name_len }}');
@@ -77,7 +65,6 @@ firebase.auth().onAuthStateChanged((user) => {
         $("#rss_feed").val(`${window.location.origin}/writeups/${uid}`)
 
         $("#filter").show();
-        $("#login").hide();
 
         firebase.database().ref(`/data/${uid}/ctf_names`).once('value').then((snapshot) => {
             $("#ajax_loader").hide();
@@ -183,49 +170,7 @@ firebase.auth().onAuthStateChanged((user) => {
     } 
     else 
     {
-        // User is signed out
-        
-        var uiConfig = 
-        {
-            callbacks: {
-                signInSuccessWithAuthResult: function(authResult, redirectUrl) 
-                {
-                    // User successfully signed in.
-                    // Return type determines whether we continue the redirect automatically
-                    // or whether we leave that to developer to handle.
-                    $("#login").hide();
-                    return false;
-                },
-                uiShown: function() 
-                {
-                    // The widget is rendered.
-                    $(".firebaseui-title").text("Sign in / Sign up with email")
-                }
-            },
-            'credentialHelper': firebaseui.auth.CredentialHelper.NONE,
-            // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-            //signInFlow: 'popup',
-            //signInSuccessUrl: '/filter',
-            signInOptions: [
-                {
-                    provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                    requireDisplayName: false
-                }
-            ],
-            // Terms of service url.
-            tosUrl: '/tos',
-            // Privacy policy url.
-            //privacyPolicyUrl: '<your-privacy-policy-url>'
-        };
-
-        $("#filter").hide();
-        $("#login").show();
-        $("#ajax_loader").show();
-        $("#filter .ctf_name_entry").remove();
-
-        const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
-        ui.start('#firebaseui-auth-container', uiConfig);
-        
+        document.location.href = "/login";
     }
 });
 
