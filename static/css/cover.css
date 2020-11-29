@@ -92,6 +92,13 @@ body {
 }
 
 
+@media (max-width: 48em) {
+  .nav-masthead {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+}
+
 /*
  * Cover
  */
