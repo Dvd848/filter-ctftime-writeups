@@ -11,7 +11,8 @@ a:hover {
 }
 
 a {
-  text-decoration: underline;
+  /*text-decoration: underline;*/
+  color: #f6d8ac;
 }
 
 a:focus,
@@ -29,7 +30,6 @@ html,
 body {
   height: 100%;
   /*background-color: #333;*/
-  
 }
 
 body {
@@ -37,10 +37,10 @@ body {
   display: flex;
   color: #fff;
   text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-  box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+  /*box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);*/
   background: rgb(2,0,36);
   background: linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);
-  
+  background-attachment: fixed;  
 }
 
 .cover-container {
@@ -152,12 +152,12 @@ a.btn {
 }
 */
 
-#ctf_names_wrapper {
-  max-height: 50vh;
-  overflow-y: auto;
-}
-
 .popover, .modal {
   color: black;
   text-shadow: none;
+}
+
+.mastfoot a {
+  color: rgb(189, 182, 182);
+  text-decoration: none;
 }
