@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set active_page = "settings" %}
+
+{% block content %}
+
+<h1>Settings</h1>
+
+<form class="rounded border border-light p-3 tm-5" id="settings_block">
+    <div class="input-group p-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text">E-Mail: </label>
+          </div>
+        <input type="text" class="form-control" id="user_email" readonly>
+    </div>
+
+    <div class="input-group p-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text w-3">Current Password: </label>
+          </div>
+        <input type="password" class="form-control" id="current_password" >
+    </div>
+
+    <div class="input-group p-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text w-3">New Password: </label>
+          </div>
+        <input type="password" class="form-control" id="new_password_1">
+    </div>
+
+    <div class="input-group p-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text w-3">Confirm New Password: </label>
+          </div>
+        <input type="password" class="form-control" id="new_password_2">
+    </div>
+
+    <button type="button" class="btn btn-primary" id="update_password">Update Password</button>
+</form>
+
+{% include 'modals.html' %}
+
+{% endblock %}

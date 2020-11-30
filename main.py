@@ -52,6 +52,10 @@ def login_page():
 def tos_page():
     return render_template('tos.html', title = f"{SITE_TITLE}: Terms &amp; Conditions", page_id = "tos")
 
+@app.route('/settings')
+def settings_page():
+    return render_template('settings.html', title = f"{SITE_TITLE}: Settings", page_id = "settings")
+
 @app.route('/filter')
 def filter_page():
     return render_template('filter.html',   title = SITE_TITLE, 

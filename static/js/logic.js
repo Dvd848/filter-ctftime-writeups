@@ -34,6 +34,15 @@ function eraseCookie(name) {
 
 // ===============================================================================================
 
+function show_modal(modal_id, title, text)
+{
+    const modal = $(`#${modal_id}`);
+    modal.find(".modal-title").text(title);
+    modal.find(".modal-body").text(text);
+    modal.modal('show');
+}
+
+// ===============================================================================================
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) 
@@ -155,18 +164,16 @@ if ($("body").data("page-id") == "filter")
                     firebase.database().ref('data/' + uid).set({
                         ctf_names: new_ctf_names
                     }, (error) => {
-                        const modal = $("#saveModal")
-                        if (error) 
+                        if (error)
                         {
-                            modal.find("#saveModalLongTitle").text("Error");
-                            modal.find(".modal-body").text("An error ocurred while trying to save your changes.");
-                        } 
-                        else 
-                        {
-                            modal.find("#saveModalLongTitle").text("Changes Saved");
-                            modal.find(".modal-body").text("Your changes were saved successfully. Your feed will reflect them automatically.");
+                            show_modal( "modal_error", "Error", 
+                                        "An error ocurred while trying to save your changes.");
                         }
-                        modal.modal('show');
+                        else
+                        {
+                            show_modal( "modal_success", "Changes Saved", 
+                                        "Your changes were saved successfully. Your feed will reflect them automatically.");
+                        }
                     });
                 })
                 .show();
@@ -226,6 +233,86 @@ if ($("body").data("page-id") == "login")
             const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
             ui.start('#firebaseui-auth-container', uiConfig);
             
+        }
+    });
+}
+
+// ===============================================================================================
+
+if ($("body").data("page-id") == "settings") 
+{
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) 
+        {
+            // User is signed in
+            $("#user_email").val(user.email);
+
+            $("#update_password").click(async function(){
+                const current_password  = $("#current_password").val();
+                const new_password_1    = $("#new_password_1").val();
+                const new_password_2    = $("#new_password_2").val();
+
+                try
+                {
+                    if (current_password == "")
+                    {
+                        throw "Please enter current password";
+                    }
+
+                    if (new_password_1 == "")
+                    {
+                        throw "Please enter new password";
+                    }
+
+                    if (new_password_1 != new_password_2)
+                    {
+                        throw "New passwords don't match";
+                    }
+
+                    console.log("1")
+                    const cred = firebase.auth.EmailAuthProvider.credential(
+                        user.email,
+                        current_password
+                    );
+
+                    let reauth_res;
+
+                    try 
+                    {
+                        reauth_res = await user.reauthenticateWithCredential(cred);
+                    }
+                    catch (err)
+                    {
+                        throw "An error has occurred. " +  err.message
+                    }
+
+                    if ( (reauth_res.operationType != "reauthenticate") || (!reauth_res.user) )
+                    {
+                        throw "An error has occurred. Please try again later. "
+                    }
+
+                    try 
+                    {
+                        await user.updatePassword(new_password_1);
+                    }
+                    catch (err)
+                    {
+                        throw "An error has occurred. " +  err.message
+                    }
+
+                    show_modal( "modal_success", "Password Updated", "Your password was updated successfully!");
+                     
+                }
+                catch (err)
+                {
+                    show_modal( "modal_error", "Error", err);
+                }
+            });
+            
+        } 
+        else 
+        {
+            document.location.href = "/login";
         }
     });
 }
