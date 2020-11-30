@@ -51,8 +51,12 @@ firebase.auth().onAuthStateChanged((user) => {
 
         $( "#nav_link_logout" ).click(function() {
             firebase.auth().signOut().then(function() {
-                //document.location.href = "/";
                 eraseCookie(COOKIE_SHOW_LOGGED_IN_MENU);
+                setTimeout(function(){
+                    // W/A: Refresh to reflect logout unless redirection kicked in first
+                    window.location.reload();
+                    //document.location.href = "/";
+                }, 100);
             }).catch(function(error) {
                 console.log(error);
             });
