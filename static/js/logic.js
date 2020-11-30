@@ -1,18 +1,58 @@
+// ===============================================================================================
+
+const COOKIE_SHOW_LOGGED_IN_MENU = "logged_in_menu"
+
+// ===============================================================================================
+
+// Cookie Utilities
+// https://www.quirksmode.org/js/cookies.html
+
+function createCookie(name, value, days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime()+(days*24*60*60*1000));
+		var expires = "; expires="+date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+
+function readCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+
+function eraseCookie(name) {
+	createCookie(name,"",-1);
+}
+
+// ===============================================================================================
+
+
 firebase.auth().onAuthStateChanged((user) => {
     if (user) 
     {
         // User is signed in
 
-        signout_link = $( "<a href='javascript:void(0)' class='nav-link'>Sign Out</a>" )
-        signout_link.click(function() {
+        $( "#nav_link_logout" ).click(function() {
             firebase.auth().signOut().then(function() {
                 //document.location.href = "/";
-                signout_link.remove();
+                eraseCookie(COOKIE_SHOW_LOGGED_IN_MENU);
             }).catch(function(error) {
                 console.log(error);
             });
         });
-        $("header nav").append(signout_link);
+        createCookie(COOKIE_SHOW_LOGGED_IN_MENU, 1, 0);
+    }
+    else
+    {
+        eraseCookie(COOKIE_SHOW_LOGGED_IN_MENU);
     }
 });
 
@@ -159,6 +199,7 @@ if ($("body").data("page-id") == "login")
                         // User successfully signed in.
                         // Return type determines whether we continue the redirect automatically (true)
                         // or whether we leave that to developer to handle (false).
+                        createCookie(COOKIE_SHOW_LOGGED_IN_MENU, 1, 0);
                         return true;
                     },
                     uiShown: function() 

@@ -1,7 +1,20 @@
-{% set navigation_bar = [
-    ('/', 'index', 'Home'),
-    ('/filter', 'filter', 'Filter')
+{% set navigation_bar_global = [
+    ('/',                   'index',    'Home')
 ] -%}
+{% set navigation_bar_signed_in = [
+    ('/filter',             'filter',   'Filter'),
+    ('javascript:void(0)',  'logout',   'Sign Out')
+] -%}
+{% set navigation_bar_signed_out = [
+    ('/login',              'login',    'Sign In')
+] -%}
+
+{% if (request.cookies.get("logged_in_menu") == '1') -%} 
+    {% set navigation_bar = (navigation_bar_global + navigation_bar_signed_in) -%}
+{% else -%}
+    {% set navigation_bar = (navigation_bar_global + navigation_bar_signed_out) -%}
+{% endif -%}
+
 {% set active_page = active_page|default('index') -%}
 <!doctype html>
 
@@ -31,7 +44,7 @@
           <h3 class="masthead-brand">Writeup Feed Filter</h3>
           <nav class="nav nav-masthead justify-content-center">
             {% for href, id, caption in navigation_bar %}
-            <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}">{{ caption|e }}</a>
+            <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}" id="nav_link_{{ id|e }}">{{ caption|e }}</a>
             {% endfor %}
           </nav>
         </div>
