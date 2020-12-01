@@ -273,7 +273,6 @@ if ($("body").data("page-id") == "settings")
                         throw "New passwords don't match";
                     }
 
-                    console.log("1")
                     const cred = firebase.auth.EmailAuthProvider.credential(
                         user.email,
                         current_password
