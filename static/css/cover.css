@@ -304,7 +304,7 @@ a.btn {
  */
  .modal-confirm {		
 	color: #636363;
-	width: 400px;
+	max-width: 400px;
 }
 .modal-confirm .modal-content {
 	padding: 20px;
