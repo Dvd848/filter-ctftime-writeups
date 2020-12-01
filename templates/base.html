@@ -28,12 +28,11 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
-    <link href="{{ url_for('static',filename='css/cover.css') }}" rel="stylesheet">
+    <link href="{{ url_for_cache('static',filename='css/cover.css') }}" rel="stylesheet">
 
     {% if page_id == "login" %}
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
     {% endif %}
-
 </head>
 
 <body class="text-center" data-page-id="{{ page_id }}">
@@ -91,7 +90,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 
-    <script src="{{ url_for('static',filename='js/logic.js') }}"></script>
+    <script src="{{ url_for_cache('static',filename='js/logic.js') }}"></script>
 
     <!-- Cover template for Bootstrap, by https://twitter.com/mdo -->
     <!-- https://getbootstrap.com/docs/4.5/examples/cover/ -->

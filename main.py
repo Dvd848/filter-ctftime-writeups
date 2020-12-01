@@ -1,10 +1,11 @@
-from flask import Flask, Response, render_template
+from flask import Flask, Response, render_template, url_for
 from enum import Enum
 from flask.logging import create_logger
 from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
 from database import ENTRY_SEPARATOR
 import filter
 import requests
+import os
 
 SITE_TITLE = 'Writeup Feed Filter'
 
@@ -13,6 +14,17 @@ class HttpStatus(Enum):
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
+
+def url_for_cache(endpoint, **values):
+    try:
+        if ("filename" in values):
+            mod_date = str(os.path.getmtime(os.path.join(endpoint, values["filename"])))
+            values["cache"] = mod_date
+    except Exception:
+        pass
+    return url_for(endpoint, **values)
+
+app.jinja_env.globals['url_for_cache'] = url_for_cache
 
 @app.route("/writeups/<string:uid>")
 def writeups(uid):
