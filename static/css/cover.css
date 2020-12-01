@@ -195,7 +195,8 @@ a.btn {
 	top: 3px;*/
 }
 .modal-success.modal-dialog {
-	margin-top: 80px;
+	/*margin-top: 80px;*/
+	margin: 60px auto;
 }
 .modal-success .btn {
 	color: #fff;
@@ -216,7 +217,7 @@ a.btn {
  */
 .modal-error {		
 	color: #434e65;
-	width: 525px;
+	max-width: 525px;
 }
 .modal-error .modal-content {
 	padding: 20px;
@@ -231,7 +232,7 @@ a.btn {
 	text-align: center;
 	margin: -20px -20px 0;
 	border-radius: 5px 5px 0 0;
-	padding: 35px;
+	padding: 15px;
 }
 .modal-error h4 {
 	text-align: center;
@@ -257,14 +258,14 @@ a.btn {
 	color: #fff;		
 	width: 95px;
 	height: 95px;
-	display: inline-block;
+	/*display: inline-block;*/
 	border-radius: 50%;
 	z-index: 9;
 	border: 5px solid #fff;
 	padding: 15px;
-    text-align: center;
-  
-    display: flex;
+	text-align: center;
+	
+	display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -275,7 +276,9 @@ a.btn {
 	/*margin: -2px 0 0 -2px;*/
 }
 .modal-error.modal-dialog {
-	margin-top: 80px;
+	/*margin-top: 80px;*/
+	width: 90%;
+	margin: 20px auto;
 }
 .modal-error .btn, .modal-error .btn:active {
 	color: #fff;
