@@ -34,11 +34,16 @@ function eraseCookie(name) {
 
 // ===============================================================================================
 
-function show_modal(modal_id, title, text)
+function show_modal(modal_id, title, html_body, modal_action)
 {
     const modal = $(`#${modal_id}`);
+    modal.find(".modal_action").unbind();
     modal.find(".modal-title").text(title);
-    modal.find(".modal-body").text(text);
+    modal.find(".modal-body").html(html_body);
+    if (modal_action)
+    {
+        modal.find(".modal_action").click(async function(){ await modal_action(modal)});
+    }
     modal.modal('show');
 }
 
@@ -249,7 +254,12 @@ if ($("body").data("page-id") == "settings")
         if (user) 
         {
             // User is signed in
+
             $("#user_email").val(user.email);
+
+            const sanitize_html = function(html) {
+                return $('<div>').text(html).html()
+            }
 
             $("#update_password").click(async function(){
                 const current_password  = $("#current_password").val();
@@ -278,20 +288,13 @@ if ($("body").data("page-id") == "settings")
                         current_password
                     );
 
-                    let reauth_res;
-
                     try 
                     {
-                        reauth_res = await user.reauthenticateWithCredential(cred);
+                        await user.reauthenticateWithCredential(cred);
                     }
                     catch (err)
                     {
-                        throw "An error has occurred. " +  err.message
-                    }
-
-                    if ( (reauth_res.operationType != "reauthenticate") || (!reauth_res.user) )
-                    {
-                        throw "An error has occurred. Please try again later. "
+                        throw `An error has occurred. <br/>${sanitize_html(err.message)}`;
                     }
 
                     try 
@@ -300,16 +303,74 @@ if ($("body").data("page-id") == "settings")
                     }
                     catch (err)
                     {
-                        throw "An error has occurred. " +  err.message
+                        throw `An error has occurred. <br/>${sanitize_html(err.message)}`;
                     }
 
-                    show_modal( "modal_success", "Password Updated", "Your password was updated successfully!");
+                    show_modal("modal_success", "Password Updated", "<p>Your password was updated successfully!</p>");
                      
                 }
                 catch (err)
                 {
-                    show_modal( "modal_error", "Error", err);
+                    show_modal("modal_error", "Error", `<p>${err}</p>`);
                 }
+            });
+
+            $("#delete_account").click(function() {
+                const confirm_action = async function(modal) {
+                    try
+                    {
+                        const current_password = $("#confirm_password_delete_account").val();
+
+                        if (current_password == "")
+                        {
+                            throw "In order to delete your account you must re-enter your current password";
+                        }
+
+                        const cred = firebase.auth.EmailAuthProvider.credential(
+                            user.email,
+                            current_password
+                        );
+
+                        try 
+                        {
+                            await user.reauthenticateWithCredential(cred);
+                        }
+                        catch (err)
+                        {
+                            throw `An error has occurred. <br/>${sanitize_html(err.message)}`;
+                        }
+
+                        try
+                        {
+                            await firebase.database().ref('data/' + user.uid).remove();
+                        }
+                        catch (err)
+                        {
+                            throw `An error has occurred. <br/>${sanitize_html(err.message)}`;
+                        }
+                        
+                        try 
+                        {
+                            await user.delete();
+                        }
+                        catch (err)
+                        {
+                            throw `An error has occurred. <br/>${sanitize_html(err.message)}`;
+                        }
+                    }
+                    catch(err)
+                    {
+                        modal.modal('hide');
+                        show_modal("modal_error", "Error", `<p>${err}</p>`);
+                        return;
+                    }
+
+                    // User will be logged out
+
+                }
+                show_modal( "modal_confirm", "Are you sure?", `<p>Deleting your account cannot be undone. You'll also lose your custom feed. 
+                            <br/>To permanently delete your account, enter your password and click "Confirm".</p>
+                            <input type='password' id='confirm_password_delete_account'/>`, confirm_action);
             });
             
         } 

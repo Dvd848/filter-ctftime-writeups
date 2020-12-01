@@ -15,7 +15,6 @@
 {% else -%}
     {% set navigation_bar = (navigation_bar_global + navigation_bar_signed_out) -%}
 {% endif -%}
-
 <!doctype html>
 
 <html lang="en">
@@ -39,26 +38,26 @@
 
 <body class="text-center" data-page-id="{{ page_id }}">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-      <header class="masthead mb-auto">
-        <div class="inner">
-          <h3 class="masthead-brand">Writeup Feed Filter</h3>
-          <nav class="nav nav-masthead justify-content-center">
-            {% for href, id, caption in navigation_bar %}
-            <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}" id="nav_link_{{ id|e }}">{{ caption|e }}</a>
-            {% endfor %}
-          </nav>
-        </div>
-      </header>
+        <header class="masthead mb-auto">
+            <div class="inner">
+                <h3 class="masthead-brand">Writeup Feed Filter</h3>
+                <nav class="nav nav-masthead justify-content-center">
+                {% for href, id, caption in navigation_bar %}
+                    <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}" id="nav_link_{{ id|e }}">{{ caption|e }}</a>
+                {% endfor %}
+                </nav>
+            </div>
+        </header>
     
-      <main role="main" class="inner cover">
-          {% block content %}{% endblock %}
-      </main>
-    
-      <footer class="mastfoot mt-auto">
-        <div class="inner">
-          <p><a href="https://github.com/Dvd848/filter-ctftime-writeups">Fork on Github</a> | <a href="/tos">Terms of Service</a></p>
-        </div>
-      </footer>
+        <main role="main" class="inner cover">
+            {% block content %}{% endblock %}
+        </main>
+        
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p><a href="https://github.com/Dvd848/filter-ctftime-writeups">Fork on Github</a> | <a href="/tos">Terms of Service</a></p>
+            </div>
+        </footer>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h1>Settings</h1>
+<h1 class="mb-4">Settings</h1>
 
 <form class="rounded border border-light p-3 tm-5" id="settings_block">
     <div class="input-group p-3">
@@ -36,6 +36,10 @@
 
     <button type="button" class="btn btn-primary" id="update_password">Update Password</button>
 </form>
+
+<div class="m-4">
+    <button type="button" class="btn btn-danger" id="delete_account">Delete Account</button>
+</div>
 
 {% include 'modals.html' %}
 
