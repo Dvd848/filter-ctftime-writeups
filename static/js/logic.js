@@ -101,7 +101,7 @@ if ($("body").data("page-id") == "filter")
                         <input type="text" class="form-control ctf_name_input" maxlength="${MAX_ENTRY_NAME_LEN}"
                                 placeholder="CTF Name" aria-label="CTF Name" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary btn-danger text-white remove_ctf_name" type="button">🗙</button>
+                            <button class="btn btn-outline-secondary btn-danger text-white remove_ctf_name" type="button">&times;</button>
                         </div>
                     </div>`);
                     input_wrapper.find(".remove_ctf_name").click(function(){
