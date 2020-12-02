@@ -106,7 +106,7 @@ firebase.auth().onAuthStateChanged((user) => {
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_PAGE_FILTER) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_FILTER) 
 {
     firebase.auth().onAuthStateChanged((user) => 
     {
@@ -248,7 +248,7 @@ if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_PAGE_FILTER
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_PAGE_LOGIN) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_LOGIN) 
 {
     firebase.auth().onAuthStateChanged((user) => 
     {
@@ -303,7 +303,7 @@ if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_PAGE_LOGIN)
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_PAGE_SETTINGS) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_SETTINGS) 
 {
     firebase.auth().onAuthStateChanged((user) => 
     {

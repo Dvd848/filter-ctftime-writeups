@@ -1,7 +1,9 @@
 from enum import Enum
 
-def enum_to_dict(enumeration: Enum):
-    res = {}
-    for item in enumeration:
-        res[str(item).replace(".", "_")] = item.value
-    return res
+class FlattenableEnum(Enum):
+    @classmethod
+    def as_flat_dict(cls):
+        res = {}
+        for item in cls:
+            res[str(item).replace(".", "_")] = item.value
+        return res

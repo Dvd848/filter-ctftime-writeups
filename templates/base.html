@@ -1,25 +1,5 @@
 <!doctype html>
-{% if constants is not defined %}
-    {% set constants = get_global_constants() %}
-{% endif %}
-
-{% set navigation_bar_global = [
-    ('/',                   'index',    'Home')
-] -%}
-{% set navigation_bar_signed_in = [
-    ('/filter',             'filter',   'Filter'),
-    ('/settings',           'settings', 'Settings'),
-    ('javascript:void(0)',  'logout',   'Sign Out')
-] -%}
-{% set navigation_bar_signed_out = [
-    ('/login',              'login',    'Sign In')
-] -%}
-
-{% if (request.cookies.get(constants.COOKIE_MENU_TYPE) == constants.COOKIE_MENU_TYPE_LOGGED_IN) -%} 
-    {% set navigation_bar = (navigation_bar_global + navigation_bar_signed_in) -%}
-{% else -%}
-    {% set navigation_bar = (navigation_bar_global + navigation_bar_signed_out) -%}
-{% endif -%}
+{% set navigation_bar = get_menu(request.cookies) -%}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -33,7 +13,7 @@
 
     <link href="{{ url_for_cache('static',filename='css/cover.css') }}" rel="stylesheet">
 
-    {% if page_id == constants.PageIds_PAGE_LOGIN %}
+    {% if page_id == PageIds.LOGIN.value %}
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
     {% endif %}
 </head>
@@ -88,11 +68,15 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
 
+    {% if local_constants is not defined %}
+        {% set local_constants = [] %}
+    {% endif %}
+
     var WriteupFeedFilter = WriteupFeedFilter || {};
     WriteupFeedFilter.Constants = {};
     (function(context) 
     { 
-        {% for name, value in constants.items() %}
+        {% for name, value in get_flat_constants(local_constants).items() %}
         context.{{ name }} = {% if value is number %} {{ value }}{% else %}"{{ value }}"{% endif %};
         {% endfor %}
     })(WriteupFeedFilter.Constants);

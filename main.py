@@ -3,6 +3,7 @@ from enum import Enum
 from flask.logging import create_logger
 from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
 from database import ENTRY_SEPARATOR
+from collections import namedtuple
 import filter
 import requests
 import os
@@ -11,12 +12,19 @@ import utils
 class HttpStatus(Enum):
     HTTP_500_INTERNAL_SERVER_ERROR = 500
 
-class PageIds(Enum):
-    PAGE_INDEX      = "index"
-    PAGE_LOGIN      = "login"
-    PAGE_TOS        = "tos"
-    PAGE_SETTINGS   = "settings"
-    PAGE_FILTER     = "filter"
+class PageIds(utils.FlattenableEnum, Enum):
+    # Subclassing Enum directly works around a bug in pylint
+    # https://github.com/PyCQA/pylint/issues/533
+    INDEX      = "index"
+    LOGIN      = "login"
+    TOS        = "tos"
+    SETTINGS   = "settings"
+    FILTER     = "filter"
+
+COOKIE_MENU_TYPE = "menu_type"
+COOKIE_MENU_TYPE_LOGGED_IN = "logged_in"
+
+MenuItem = namedtuple("MenuItem", "href id caption")
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
@@ -60,44 +68,69 @@ def writeups(uid):
     
     return res
 
+@app.context_processor
+def template_globals():
+    return dict(
+        COOKIE_MENU_TYPE = COOKIE_MENU_TYPE,
+        COOKIE_MENU_TYPE_LOGGED_IN = COOKIE_MENU_TYPE_LOGGED_IN,
+        PageIds = PageIds
+    )
+
+
 @app.template_global()
-def get_global_constants():
+def get_flat_constants(local_constants):
     res = dict()
 
-    res["COOKIE_MENU_TYPE"] = "menu_type"
-    res["COOKIE_MENU_TYPE_LOGGED_IN"] = "logged_in"
-    res.update(utils.enum_to_dict(PageIds))
+    globals = template_globals()
+    globals.update(local_constants)
+    for key, value in globals.items():
+        if hasattr(value, "as_flat_dict"):
+            res.update(value.as_flat_dict())
+        else:
+            res[key] = value
+
+    return res
+
+@app.template_global()
+def get_menu(cookies):
+    res      = [MenuItem('/',                   PageIds.INDEX.value,    'Home')]
+
+    if cookies.get(COOKIE_MENU_TYPE) == COOKIE_MENU_TYPE_LOGGED_IN:
+        res += [MenuItem('/filter',             PageIds.FILTER.value,   'Filter'),
+                MenuItem('/settings',           PageIds.SETTINGS.value, 'Settings'),
+                MenuItem('javascript:void(0)',  'logout',               'Sign Out')]
+    else:
+        res += [MenuItem('/login',              PageIds.LOGIN.value,    'Sign In')]
 
     return res
 
 @app.route('/')
 def index_page():
-    page = PageIds.PAGE_INDEX.value
+    page = PageIds.INDEX.value
     return render_template(f'{page}.html', page_id = page)
 
 @app.route('/login')
 def login_page():
-    page = PageIds.PAGE_LOGIN.value
+    page = PageIds.LOGIN.value
     return render_template(f'{page}.html', title = "Sign-up / Sign-in", page_id = page)
 
 @app.route('/tos')
 def tos_page():
-    page = PageIds.PAGE_TOS.value
+    page = PageIds.TOS.value
     return render_template(f'{page}.html', title = "Terms &amp; Conditions", page_id = page)
 
 @app.route('/settings')
 def settings_page():
-    page = PageIds.PAGE_SETTINGS.value
+    page = PageIds.SETTINGS.value
     return render_template(f'{page}.html', title = "Settings", page_id = page)
 
 @app.route('/filter')
 def filter_page():
-    page = PageIds.PAGE_FILTER.value
-    constants = get_global_constants()
-    constants.update(MAX_CTF_ENTRIES = MAX_CTF_ENTRIES, 
-                     ENTRY_SEPARATOR = ENTRY_SEPARATOR,
-                     MAX_ENTRY_NAME_LEN = MAX_ENTRY_NAME_LEN)
-    return render_template(f'{page}.html', title = "Filter", page_id = page, constants = constants)
+    page = PageIds.FILTER.value
+    local_constants = dict( MAX_CTF_ENTRIES = MAX_CTF_ENTRIES, 
+                            ENTRY_SEPARATOR = ENTRY_SEPARATOR,
+                            MAX_ENTRY_NAME_LEN = MAX_ENTRY_NAME_LEN)
+    return render_template(f'{page}.html', title = "Filter", page_id = page, local_constants = local_constants)
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', threaded = True, port = 5000)
