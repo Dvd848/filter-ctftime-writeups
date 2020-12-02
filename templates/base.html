@@ -1,5 +1,5 @@
 <!doctype html>
-{% set navigation_bar = get_menu(request.cookies) -%}
+{%- set navigation_bar = get_menu(request.cookies) %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,9 +13,9 @@
 
     <link href="{{ url_for_cache('static',filename='css/cover.css') }}" rel="stylesheet">
 
-    {% if page_id == PageIds.LOGIN.value %}
+    {%- if page_id == PageIds.LOGIN.value -%}
     <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/4.6.1/firebase-ui-auth.css" />
-    {% endif %}
+    {%- endif %}
 </head>
 
 <body class="text-center" data-page-id="{{ page_id }}">
@@ -24,15 +24,15 @@
             <div class="inner">
                 <h3 class="masthead-brand">Writeup Feed Filter</h3>
                 <nav class="nav nav-masthead justify-content-center">
-                {% for href, id, caption in navigation_bar %}
+                {%- for href, id, caption in navigation_bar %}
                     <a href="{{ href|e }}" class="nav-link {% if id == active_page %} active {% endif %}" id="nav_link_{{ id|e }}">{{ caption|e }}</a>
-                {% endfor %}
+                {%- endfor %}
                 </nav>
             </div>
         </header>
     
         <main role="main" class="inner cover">
-            {% block content %}{% endblock %}
+            {%- block content %}{% endblock %}
         </main>
         
         <footer class="mastfoot mt-auto">
@@ -68,17 +68,17 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
 
-    {% if local_constants is not defined %}
-        {% set local_constants = [] %}
-    {% endif %}
+    {% if local_constants is not defined -%}
+        {%- set local_constants = [] -%}
+    {%- endif -%}
 
     var WriteupFeedFilter = WriteupFeedFilter || {};
     WriteupFeedFilter.Constants = {};
     (function(context) 
     { 
-        {% for name, value in get_flat_constants(local_constants).items() %}
+        {%- for name, value in get_flat_constants(local_constants).items() %}
         context.{{ name }} = {% if value is number %} {{ value }}{% else %}"{{ value }}"{% endif %};
-        {% endfor %}
+        {%- endfor %}
     })(WriteupFeedFilter.Constants);
     </script>
 

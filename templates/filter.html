@@ -3,34 +3,34 @@
 
 {% block content %}
 
-    <div id="filter">
-        <h1 class="mt-3">Filter the Writeups Feed</h1>
-        <p class="lead">
-            Enter the CTF Event Names you'd like to see in your feed. 
-        </p>
-        <p>
-            Entries are case-insensitive and partial matches are allowed.
-        </p>
-        <div class="rounded border border-light p-3 m-3 text-center" id="ctf_names_wrapper">
-            <div id="ctf_names">
-                <img src="{{ url_for('static',filename='images/ajax-loader.gif') }}" alt="Loading..." id="ajax_loader" />
-            </div>
-            <button class="btn btn-primary" id="add_button">+</button>
-        </div>
-        <div class="m-3">
-            <button class="btn btn-success" id="save_button">Save</button>
-            
-            <div class="input-group" id="rss_feed_link">
-                <div class="input-group-prepend">
-                    <label class="input-group-text">Your RSS Feed: </label>
-                  </div>
-                <input type="text" class="form-control" id="rss_feed" readonly>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary btn-success text-white" type="button" id="copy_rss_feed_link" data-content="Link Copied">📋</button>
+            <div id="filter">
+                <h1 class="mt-3">Filter the Writeups Feed</h1>
+                <p class="lead">
+                    Enter the CTF Event Names you'd like to see in your feed. 
+                </p>
+                <p>
+                    Entries are case-insensitive and partial matches are allowed.
+                </p>
+                <div class="rounded border border-light p-3 m-3 text-center" id="ctf_names_wrapper">
+                    <div id="ctf_names">
+                        <img src="{{ url_for('static',filename='images/ajax-loader.gif') }}" alt="Loading..." id="ajax_loader" />
+                    </div>
+                    <button class="btn btn-primary" id="add_button">+</button>
+                </div>
+                <div class="m-3">
+                    <button class="btn btn-success" id="save_button">Save</button>
+                    
+                    <div class="input-group" id="rss_feed_link">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text">Your RSS Feed: </label>
+                        </div>
+                        <input type="text" class="form-control" id="rss_feed" readonly>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary btn-success text-white" type="button" id="copy_rss_feed_link" data-content="Link Copied">📋</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
     {% include 'modals.html' %}
 
