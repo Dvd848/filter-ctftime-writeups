@@ -7,14 +7,13 @@ import filter
 import requests
 import os
 
-SITE_TITLE = 'Writeup Feed Filter'
-
 class HttpStatus(Enum):
     HTTP_500_INTERNAL_SERVER_ERROR = 500
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
 
+@app.template_global()
 def url_for_cache(endpoint, **values):
     try:
         if ("filename" in values):
@@ -23,8 +22,6 @@ def url_for_cache(endpoint, **values):
     except Exception:
         pass
     return url_for(endpoint, **values)
-
-app.jinja_env.globals['url_for_cache'] = url_for_cache
 
 @app.route("/writeups/<string:uid>")
 def writeups(uid):
@@ -54,27 +51,26 @@ def writeups(uid):
 
 @app.route('/')
 def index_page():
-    return render_template('index.html', title = SITE_TITLE, page_id = "index")
+    return render_template('index.html', page_id = "index")
 
 @app.route('/login')
 def login_page():
-    return render_template('login.html', title = f"{SITE_TITLE}: Sign-up / Sign-in", page_id = "login")
+    return render_template('login.html', title = "Sign-up / Sign-in", page_id = "login")
 
 @app.route('/tos')
 def tos_page():
-    return render_template('tos.html', title = f"{SITE_TITLE}: Terms &amp; Conditions", page_id = "tos")
+    return render_template('tos.html', title = "Terms &amp; Conditions", page_id = "tos")
 
 @app.route('/settings')
 def settings_page():
-    return render_template('settings.html', title = f"{SITE_TITLE}: Settings", page_id = "settings")
+    return render_template('settings.html', title = "Settings", page_id = "settings")
 
 @app.route('/filter')
 def filter_page():
-    return render_template('filter.html',   title = SITE_TITLE, 
-                                            page_id = "filter",
-                                            max_ctf_entries = MAX_CTF_ENTRIES, 
-                                            entry_separator = ENTRY_SEPARATOR,
-                                            max_entry_name_len = MAX_ENTRY_NAME_LEN)
+    return render_template('filter.html', title = "Filter", page_id = "filter",
+                                          max_ctf_entries = MAX_CTF_ENTRIES, 
+                                          entry_separator = ENTRY_SEPARATOR,
+                                          max_entry_name_len = MAX_ENTRY_NAME_LEN)
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', threaded = True, port = 5000)
