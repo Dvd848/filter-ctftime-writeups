@@ -33,6 +33,9 @@ def writeups(uid):
         }
         r = requests.get("https://ctftime.org/writeups/rss/", headers = headers)
 
+        if (not r.headers['content-type'].startswith("application/rss+xml")):
+            raise Exception("Invalid content type received from CTFTime: {}".format(r.headers['content-type']))
+
         content = filter.filter_writeups(r.text, user.ctf_list)
 
         res = Response(
