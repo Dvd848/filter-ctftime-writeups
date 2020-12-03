@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, url_for
+from flask import Flask, Response, render_template, url_for, send_from_directory
 from enum import Enum
 from flask.logging import create_logger
 from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
@@ -28,6 +28,11 @@ MenuItem = namedtuple("MenuItem", "href id caption")
 
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'images/favicon/favicon.ico')
 
 @app.template_global()
 def url_for_cache(endpoint, **values):
