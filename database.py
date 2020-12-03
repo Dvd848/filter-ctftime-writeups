@@ -10,6 +10,11 @@ from firebase_admin import db
 from typing import List
 
 ENTRY_SEPARATOR = "␞"
+UID_PLACEHOLDER = "##UID##"
+PATH_TO_USER_DATA = "data/" + UID_PLACEHOLDER + "/"
+KEY_USER_CTF_NAMES = "ctf_names"
+PATH_TO_CTF_NAMES = PATH_TO_USER_DATA + KEY_USER_CTF_NAMES
+
 
 class DatabaseException(Exception):
     pass
@@ -34,7 +39,7 @@ def get_ctf_names(uid: str) -> List[str]:
     if not _is_legal_key(uid):
         raise ValueError(f"Invalid DB key: {uid}")
     
-    ref = db.reference(f'data/{uid}/ctf_names')
+    ref = db.reference(PATH_TO_CTF_NAMES.replace(UID_PLACEHOLDER, uid))
     ctf_names = ref.get()
     if ctf_names is None:
         raise DatabaseException(f"Unknown user: {uid}")

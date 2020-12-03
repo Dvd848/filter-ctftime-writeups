@@ -2,7 +2,7 @@ from flask import Flask, Response, render_template, url_for
 from enum import Enum
 from flask.logging import create_logger
 from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
-from database import ENTRY_SEPARATOR
+from database import ENTRY_SEPARATOR, PATH_TO_CTF_NAMES, UID_PLACEHOLDER, PATH_TO_USER_DATA, KEY_USER_CTF_NAMES
 from collections import namedtuple
 import filter
 import requests
@@ -73,6 +73,10 @@ def template_globals():
     return dict(
         COOKIE_MENU_TYPE = COOKIE_MENU_TYPE,
         COOKIE_MENU_TYPE_LOGGED_IN = COOKIE_MENU_TYPE_LOGGED_IN,
+        PATH_TO_CTF_NAMES = PATH_TO_CTF_NAMES,
+        UID_PLACEHOLDER = UID_PLACEHOLDER,
+        PATH_TO_USER_DATA = PATH_TO_USER_DATA,
+        KEY_USER_CTF_NAMES = KEY_USER_CTF_NAMES,
         PageIds = PageIds
     )
 
