@@ -7,18 +7,18 @@
 a,
 a:focus,
 a:hover {
-  color: #fff;
+    color: #fff;
 }
 
 a {
-  /*text-decoration: underline;*/
-  color: #f6d8ac;
+    /*text-decoration: underline;*/
+    color: #f6d8ac;
 }
 
 a:focus,
 a:hover {
-  color: orange;
-  text-decoration: none;
+    color: orange;
+    text-decoration: none;
 }
 
 
@@ -28,23 +28,23 @@ a:hover {
 
 html,
 body {
-  height: 100%;
-  /*background-color: #333;*/
+    height: 100%;
+    /*background-color: #333;*/
 }
 
 body {
-  display: -ms-flexbox;
-  display: flex;
-  color: #fff;
-  text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
-  /*box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);*/
-  background: rgb(2,0,36);
-  background: linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);
-  background-attachment: fixed;  
+    display: -ms-flexbox;
+    display: flex;
+    color: #fff;
+    text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+    /*box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);*/
+    background: rgb(2,0,36);
+    background: linear-gradient(10deg, rgba(2,0,36,1) 0%, rgba(72,72,189,1) 62%, rgba(0,212,255,1) 100%);
+    background-attachment: fixed;    
 }
 
 .cover-container {
-  max-width: 50em;
+    max-width: 50em;
 }
 
 
@@ -52,90 +52,90 @@ body {
  * Header
  */
 .masthead {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 }
 
 .masthead-brand {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .nav-masthead .nav-link {
-  padding: .25rem 0;
-  font-weight: 700;
-  color: rgba(255, 255, 255, .8);
-  background-color: transparent;
-  border-bottom: .25rem solid transparent;
-  text-decoration: none;
+    padding: .25rem 0;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .8);
+    background-color: transparent;
+    border-bottom: .25rem solid transparent;
+    text-decoration: none;
 }
 
 .nav-masthead .nav-link:hover,
 .nav-masthead .nav-link:focus {
-  border-bottom-color: rgba(255, 255, 255, .25);
+    border-bottom-color: rgba(255, 255, 255, .25);
 }
 
 .nav-masthead .nav-link + .nav-link {
-  margin-left: 1rem;
+    margin-left: 1rem;
 }
 
 .nav-masthead .active {
-  color: #fff;
-  border-bottom-color: #fff;
+    color: #fff;
+    border-bottom-color: #fff;
 }
 
 @media (min-width: 48em) {
-  .masthead-brand {
-    float: left;
-  }
-  .nav-masthead {
-    float: right;
-  }
+    .masthead-brand {
+        float: left;
+    }
+    .nav-masthead {
+        float: right;
+    }
 }
 
-
 @media (max-width: 48em) {
-  .nav-masthead {
-    margin-top: 15px;
-    margin-bottom: 15px;
-  }
+    .nav-masthead {
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }    
 }
 
 /*
  * Cover
  */
 .cover {
-  padding: 0 1.5rem;
+    padding: 0 1.5rem;
 }
 
 a.btn {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 /*
  * Footer
  */
 .mastfoot {
-  color: rgba(255, 255, 255, .5);
+    color: rgba(255, 255, 255, .5);
 }
 
 .bd-placeholder-img {
-  font-size: 1.125rem;
-  text-anchor: middle;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 @media (min-width: 768px) {
-  .bd-placeholder-img-lg {
-    font-size: 3.5rem;
-  }
+    .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+    }
 }
 
 /*
  * Success Modal
+ * https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=simple-success-confirmation-popup
  */
-.modal-success {        
+.modal-success {                
     color: #636363;
     width: 325px;
     font-size: 16px;
@@ -146,7 +146,7 @@ a.btn {
     border: none;
 }
 .modal-success .modal-header {
-    border-bottom: none;   
+    border-bottom: none;     
     position: relative;
 }
 .modal-success h4 {
@@ -162,15 +162,15 @@ a.btn {
     position: absolute;
     top: -5px;
     right: -5px;
-}    
+}        
 .modal-success .modal-footer {
     border: none;
     text-align: center;
     border-radius: 5px;
     font-size: 13px;
-}    
+}        
 .modal-success .icon-box {
-    color: #fff;        
+    color: #fff;                
     position: absolute;
     margin: 0 auto;
     left: 0;
@@ -184,7 +184,7 @@ a.btn {
     padding: 15px;
     text-align: center;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
-  
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -214,8 +214,9 @@ a.btn {
 
 /*
  * Error Modal
+ * https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=elegant-error-modal
  */
-.modal-error {        
+.modal-error {                
     color: #434e65;
     max-width: 525px;
 }
@@ -227,7 +228,7 @@ a.btn {
 }
 .modal-error .modal-header {
     background: #e85e6c;
-    border-bottom: none;   
+    border-bottom: none;     
     position: relative;
     text-align: center;
     margin: -20px -20px 0;
@@ -255,7 +256,7 @@ a.btn {
     opacity: 0.8;
 }
 .modal-error .icon-box {
-    color: #fff;        
+    color: #fff;                
     width: 95px;
     height: 95px;
     /*display: inline-block;*/
@@ -301,8 +302,9 @@ a.btn {
 
 /*
  * Confirm Modal
+ * https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=delete-confirmation-modal
  */
- .modal-confirm {        
+.modal-confirm {                
     color: #636363;
     max-width: 400px;
 }
@@ -314,7 +316,7 @@ a.btn {
     font-size: 16px;
 }
 .modal-confirm .modal-header {
-    border-bottom: none;   
+    border-bottom: none;     
     position: relative;
 }
 .modal-confirm h4 {
@@ -332,14 +334,14 @@ a.btn {
 }
 .modal-confirm .modal-footer {
     border: none;
-    text-align: center;        
+    text-align: center;                
     border-radius: 5px;
     font-size: 13px;
     padding: 10px 15px 25px;
 }
 .modal-confirm .modal-footer a {
     color: #999;
-}        
+}                
 .modal-confirm .icon-box {
     width: 80px;
     height: 80px;
@@ -395,38 +397,56 @@ a.btn {
  */
 
 #filter {
-  display: none;
+    display: none;
 }
 
 #add_button {
-  display: none;
-  /*float: right;*/
-  margin: 10px auto;
-  width: 30%;
+    display: none;
+    /*float: right;*/
+    margin: 10px auto;
+    width: 30%;
 }
 
 #save_button {
-  /*float: left;*/
-  margin: 10px auto 30px auto;
-  width: 30%;
+    /*float: left;*/
+    margin: 10px auto 30px auto;
+    width: 30%;
 }
-/*
-#rss_feed_link {
-  width: 85%;
-  float: right;
-}
-*/
 
 .popover, .modal {
-  color: black;
-  text-shadow: none;
+    color: black;
+    text-shadow: none;
 }
 
 .mastfoot a {
-  color: rgb(189, 182, 182);
-  text-decoration: none;
+    color: rgb(189, 182, 182);
+    text-decoration: none;
 }
 
-#settings_block label {
-  min-width: 200px;
+@media (min-width: 48em) {
+
+    #settings_block label {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 48em) {
+
+    #settings_block .input-group-prepend {
+        width: 100%;
+    }
+
+    #settings_block label {
+        width: 100%;
+        float: left;
+        border-radius: 4px 4px 0 0;
+        
+    }
+
+    #settings_block input {
+        width: 100%;
+        float: right;
+        border-radius: 0 0 4px 4px;
+    }
+    
 }
