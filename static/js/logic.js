@@ -6,7 +6,7 @@ var WriteupFeedFilter = WriteupFeedFilter || {};
 WriteupFeedFilter.CookieUtils = {};
 (function(context) 
 { 
-    // https://www.quirksmode.org/js/cookies.html
+    // Based on https://www.quirksmode.org/js/cookies.html
     context.createCookie = function(name, value, days) 
     {
         let expires;
@@ -20,7 +20,7 @@ WriteupFeedFilter.CookieUtils = {};
         {
             expires = "";
         }
-        document.cookie = name + "=" + value + expires + "; path=/";
+        document.cookie = name + "=" + value + expires + "; path=/; SameSite=Strict;";
     };
  
     context.readCookie = function(name) 
@@ -145,7 +145,7 @@ firebase.auth().onAuthStateChanged((user) => {
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_FILTER) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants["PageIds.FILTER"]) 
 {
     firebase.auth().onAuthStateChanged(async (user) => 
     {
@@ -307,7 +307,7 @@ if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_FILTER)
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_LOGIN) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants["PageIds.LOGIN"]) 
 {
     firebase.auth().onAuthStateChanged((user) => 
     {
@@ -361,7 +361,7 @@ if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_LOGIN)
 
 // ===============================================================================================
 
-if ($("body").data("page-id") == WriteupFeedFilter.Constants.PageIds_SETTINGS) 
+if ($("body").data("page-id") == WriteupFeedFilter.Constants["PageIds.SETTINGS"]) 
 {
     firebase.auth().onAuthStateChanged((user) => 
     {

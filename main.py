@@ -4,28 +4,39 @@ from flask.logging import create_logger
 from user import User, MAX_CTF_ENTRIES, MAX_ENTRY_NAME_LEN
 from database import ENTRY_SEPARATOR, PATH_TO_CTF_NAMES, UID_PLACEHOLDER, PATH_TO_USER_DATA, KEY_USER_CTF_NAMES
 from collections import namedtuple
+from typing import Dict, List
 import filter
 import requests
 import os
 import utils
 
 class HttpStatus(Enum):
+    """HTTP Status Codes."""
     HTTP_500_INTERNAL_SERVER_ERROR = 500
 
 class PageIds(utils.FlattenableEnum, Enum):
-    # Subclassing Enum directly works around a bug in pylint
-    # https://github.com/PyCQA/pylint/issues/533
+    """Enumeration of page IDs.
+
+    Subclassing Enum directly works around a bug in pylint
+    https://github.com/PyCQA/pylint/issues/533
+    """
     INDEX      = "index"
     LOGIN      = "login"
     TOS        = "tos"
     SETTINGS   = "settings"
     FILTER     = "filter"
 
-COOKIE_MENU_TYPE = "menu_type"
-COOKIE_MENU_TYPE_LOGGED_IN = "logged_in"
+# Definitions related to a cookie used to decide whether to display a "logged in" menu or a "logged out" menu.
+# Since this is simply used for the navigation menu, the cookie is not signed and can be manpulated by the user.
+# The cookie should not be relied on for anything which requires authorization.
+# TODO: Consider moving to Firebase's JWT 
+COOKIE_MENU_TYPE = "menu_type" # Cookie name
+COOKIE_MENU_TYPE_LOGGED_IN = "logged_in" # Value to represent that "logged in" menu should be shown
 
+# A menu entry for the navigation menu
 MenuItem = namedtuple("MenuItem", "href id caption")
 
+# Flask application
 app = Flask("ctftime-writeups")
 logger = create_logger(app)
 
@@ -36,6 +47,12 @@ def favicon():
 
 @app.template_global()
 def url_for_cache(endpoint, **values):
+    """A wrapper for the built-in url_for function, adding cache control.
+
+    A wrapper for the built-in url_for function, which adds a "cache" parameter to the 
+    resource path containing the last modification date of the resource.
+    This is used to invalidate browser cache once the resource has changed.
+    """
     try:
         if ("filename" in values):
             mod_date = str(os.path.getmtime(os.path.join(endpoint, values["filename"])))
@@ -74,7 +91,11 @@ def writeups(uid):
     return res
 
 @app.context_processor
-def template_globals():
+def template_globals() -> dict:
+    """Returns a dictionary of constants which should be available accross all templates."""
+
+    # If one of the values in the dictionary isn't a string, it should be an object
+    # which has an as_flat_dict() method that returns a dictionary of string->string values.
     return dict(
         COOKIE_MENU_TYPE = COOKIE_MENU_TYPE,
         COOKIE_MENU_TYPE_LOGGED_IN = COOKIE_MENU_TYPE_LOGGED_IN,
@@ -87,7 +108,23 @@ def template_globals():
 
 
 @app.template_global()
-def get_flat_constants(local_constants):
+def get_flat_constants(local_constants: Dict[str, str]) -> Dict[str, str]:
+    """Constants which should be used by the current page.
+
+    Returns a dictionary of constants that should be used by the current page.
+    This includes the global constants in addition to constants relevant only for the 
+    current page.
+    Both keys and values in the dictionary must be strings.
+    
+    Args:
+        local_constants:
+            A dictionary of constants used only in the current page.
+            They will be added to the constants dictionary returned by this function.
+
+    Returns:
+        A dictionary of constants to be used on the page, as strings, consisting of the global
+        and local constants.
+    """
     res = dict()
 
     globals = template_globals()
@@ -101,7 +138,17 @@ def get_flat_constants(local_constants):
     return res
 
 @app.template_global()
-def get_menu(cookies):
+def get_menu(cookies: dict) -> List[MenuItem]:
+    """Returns the menu items to be displayed in the navigation bar.
+
+    Args:
+        cookies:
+            Flask's request.cookies dictionary.
+    
+    Returns:
+        A list of MenuItems representing the navigation menu, based on whether 
+        the menu should includes entries for logged in or logged out users.
+    """
     res      = [MenuItem('/',                   PageIds.INDEX.value,    'Home')]
 
     if cookies.get(COOKIE_MENU_TYPE) == COOKIE_MENU_TYPE_LOGGED_IN:

@@ -82,7 +82,7 @@
     (function(context) 
     { 
         {%- for name, value in get_flat_constants(local_constants).items() %}
-        context.{{ name }} = {% if value is number %} {{ value }}{% else %}"{{ value }}"{% endif %};
+        context["{{ name }}"] = {% if value is number %} {{ value }}{% else %}"{{ value }}"{% endif %};
         {%- endfor %}
     })(WriteupFeedFilter.Constants);
     </script>
