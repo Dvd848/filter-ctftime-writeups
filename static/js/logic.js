@@ -20,7 +20,7 @@ WriteupFeedFilter.CookieUtils = {};
         {
             expires = "";
         }
-        document.cookie = name + "=" + value + expires + "; path=/; SameSite=Strict;";
+        document.cookie = name + "=" + value + expires + "; path=/; SameSite=Lax;";
     };
  
     context.readCookie = function(name) 
