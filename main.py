@@ -174,7 +174,7 @@ def create_app():
     @app.route('/tos')
     def tos_page():
         page = PageIds.TOS.value
-        return render_template(f'{page}.html', title = "Terms &amp; Conditions", page_id = page)
+        return render_template(f'{page}.html', title = "Terms & Conditions", page_id = page)
 
     @app.route('/settings')
     def settings_page():
