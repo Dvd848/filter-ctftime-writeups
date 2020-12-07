@@ -23,7 +23,6 @@ class PageURIs(Enum):
     SETTINGS    = "/settings"
     TOS         = "/tos"
 
-
 class TestBase(unittest.TestCase):
     PORT            = 5000
     TIMEOUT         = 4
@@ -96,6 +95,10 @@ class TestBase(unittest.TestCase):
     def teardownBrowser(cls):
         cls.browser.quit()
 
+    def screenshot(self, name = "screenshot.png"):
+        self.browser.save_screenshot(name)
+
+
 
 class TestLoggedOut(TestBase):
 
@@ -151,29 +154,107 @@ class TestLoggedInFilter(TestBase):
         self.removeAllNames()
         self.browser.get(self.getUrl(PageURIs.FILTER.value))
     
+    def getRemoveButton(self):
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "remove_ctf_name")))
+        return self.browser.find_elements_by_class_name("remove_ctf_name")
+
+    def saveChanges(self):
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
+        confirm_saved_button_xpath = "/html/body//main//div[@id='modal_success']//button"
+        WebDriverWait(self.browser, self.TIMEOUT).until(
+            EC.visibility_of_element_located((By.XPATH, confirm_saved_button_xpath))).click()
+        WebDriverWait(self.browser, self.TIMEOUT).until(
+            EC.invisibility_of_element_located((By.XPATH, confirm_saved_button_xpath)))
+
     def removeAllNames(self):
         self.browser.get(self.getUrl(PageURIs.FILTER.value))
-        remove_buttons = self.browser.find_elements_by_class_name("remove_ctf_name")
+        remove_buttons = self.getRemoveButton()
         for button in remove_buttons:
             button.click()
-        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
-        WebDriverWait(self.browser, self.TIMEOUT).until(
-            EC.visibility_of_element_located((By.XPATH, "/html/body//main//div[@id='modal_success']//button"))).click()
+        self.saveChanges()
+
+    def getCtfNameInputs(self):
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "ctf_name_input")))
+        return self.browser.find_elements(By.CLASS_NAME, 'ctf_name_input')
+
+    def addInput(self):
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "add_button"))).click()
+
+    def enterCtfName(self, index: int, value: str):
+        inputs = self.getCtfNameInputs()
+        if (index > len(inputs) - 1):
+            for _ in range(len(inputs) - 1, index):
+                self.addInput()
+        inputs = self.getCtfNameInputs()
+        inputs[index].send_keys(value)
+
+    # ---
  
     def testBasicLoggedIn(self):
         self.assertEqual('Filter the Writeups Feed', self.browser.find_element_by_tag_name('h1').get_attribute('textContent'))
         self.assertEqual(main.COOKIE_MENU_TYPE_LOGGED_IN, self.browser.get_cookie(main.COOKIE_MENU_TYPE)["value"])
 
-    def testAddName(self):
+    def testAddRefresh(self):
         name = "MyCTF"
-        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "ctf_name_input")))
-        first_ctf_name_input = self.browser.find_elements(By.CLASS_NAME, 'ctf_name_input')[0]
-        first_ctf_name_input.send_keys(name)
-        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
+        index = 0
+        self.enterCtfName(index, name)
+        self.saveChanges()
+
         self.browser.refresh()
-        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "ctf_name_input")))
-        first_ctf_name_input = self.browser.find_elements(By.CLASS_NAME, 'ctf_name_input')[0]
-        self.assertEqual(name, first_ctf_name_input.get_attribute("value"))
+
+        inputs = self.getCtfNameInputs()
+        self.assertEqual(name, inputs[index].get_attribute("value"))
+
+    def testAddRefreshRemove(self):
+        name = "MyCTF"
+        index = 0
+        self.enterCtfName(index, name)
+        self.saveChanges()
+
+        self.browser.refresh()
+
+        remove_buttons = self.getRemoveButton()
+        remove_buttons[index].click()
+        self.saveChanges()
+
+        self.browser.refresh()
+
+        inputs = self.getCtfNameInputs()
+        self.assertEqual("", inputs[index].get_attribute("value"))
+
+    def testAddMultipleRefresh(self):
+        names = ["MyCTF{}".format(i) for i in range(3)]
+        for i, name in enumerate(names):
+            self.enterCtfName(i, name)
+        self.saveChanges()
+
+        self.browser.refresh()
+
+        inputs = self.getCtfNameInputs()
+        self.assertEqual(len(names), len(inputs))
+        for i, name in enumerate(names):
+            self.assertEqual(name, inputs[i].get_attribute("value"))
+
+    def testAddDuplicate(self):
+        names = ["MyCTF" for _ in range(3)]
+        for i, name in enumerate(names):
+            self.enterCtfName(i, name)
+        self.saveChanges()
+
+        self.browser.refresh()
+
+        inputs = self.getCtfNameInputs()
+        unique_names = set(names)
+        self.assertEqual(len(unique_names), len(inputs))
+        for i in range(len(unique_names)):
+            self.assertIn(inputs[i].get_attribute("value"), unique_names)
+
+    def testAddMaxInputs(self):
+        self.removeAllNames()
+        for _ in range(main.MAX_CTF_ENTRIES):
+            self.addInput()
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.invisibility_of_element_located((By.ID, "add_button")))
+
 
 
 
