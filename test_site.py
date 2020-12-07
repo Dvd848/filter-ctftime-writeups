@@ -26,8 +26,8 @@ class PageURIs(Enum):
 
 class TestBase(unittest.TestCase):
     PORT            = 5000
-    TIMEOUT         = 4
-    TIMEOUT_LONG    = 8
+    TIMEOUT         = 10
+    TIMEOUT_LONG    = 15
 
     @classmethod
     def getUrl(cls, page = ''):
@@ -106,8 +106,10 @@ class TestBase(unittest.TestCase):
     def teardownBrowser(cls):
         cls.browser.quit()
 
-    def screenshot(self, name = "screenshot.png"):
-        self.browser.save_screenshot(name)
+    def screenshot(self, name = "screenshot"):
+        path = "./tmp/screenshots/"
+        Path(path).mkdir(parents = True, exist_ok = True)
+        self.browser.save_screenshot(f"{path}{name}.png")
 
 
 
@@ -164,6 +166,11 @@ class TestLoggedInFilter(TestBase):
     def setUp(self):
         self.removeAllNames()
         self.browser.get(self.getUrl(PageURIs.FILTER.value))
+        self.waitForFilter()
+
+    def waitForFilter(self):
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.XPATH, "//h1")))
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.invisibility_of_element_located((By.ID, "ajax_loader")))
     
     def getRemoveButton(self):
         WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "remove_ctf_name")))
@@ -171,11 +178,9 @@ class TestLoggedInFilter(TestBase):
 
     def saveChanges(self):
         WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
-        confirm_saved_button_xpath = "/html/body//main//div[@id='modal_success']//button"
         WebDriverWait(self.browser, self.TIMEOUT).until(
-            EC.visibility_of_element_located((By.XPATH, confirm_saved_button_xpath))).click()
-        WebDriverWait(self.browser, self.TIMEOUT).until(
-            EC.invisibility_of_element_located((By.XPATH, confirm_saved_button_xpath)))
+            EC.visibility_of_element_located((By.XPATH, "/html/body//main//div[@id='modal_success']//button"))).click()
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button")))
 
     def removeAllNames(self):
         self.browser.get(self.getUrl(PageURIs.FILTER.value))
@@ -212,6 +217,7 @@ class TestLoggedInFilter(TestBase):
         self.saveChanges()
 
         self.browser.refresh()
+        self.waitForFilter()
 
         inputs = self.getCtfNameInputs()
         self.assertEqual(name, inputs[index].get_attribute("value"))
@@ -223,12 +229,14 @@ class TestLoggedInFilter(TestBase):
         self.saveChanges()
 
         self.browser.refresh()
+        self.waitForFilter()
 
         remove_buttons = self.getRemoveButton()
         remove_buttons[index].click()
         self.saveChanges()
 
         self.browser.refresh()
+        self.waitForFilter()
 
         inputs = self.getCtfNameInputs()
         self.assertEqual("", inputs[index].get_attribute("value"))
@@ -240,6 +248,7 @@ class TestLoggedInFilter(TestBase):
         self.saveChanges()
 
         self.browser.refresh()
+        self.waitForFilter()
 
         inputs = self.getCtfNameInputs()
         self.assertEqual(len(names), len(inputs))
@@ -253,6 +262,7 @@ class TestLoggedInFilter(TestBase):
         self.saveChanges()
 
         self.browser.refresh()
+        self.waitForFilter()
 
         inputs = self.getCtfNameInputs()
         unique_names = set(names)
