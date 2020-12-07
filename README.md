@@ -3,7 +3,7 @@
 
 URL: https://ctftime-writeups.herokuapp.com
 
-This repository contains the source code for the [Writeup Feed Filter](https://ctftime-writeups.herokuapp.com) mini-service, which is an online service for filtering the [CTFTime](https://ctftime.org/) writeups RSS feed. (It's also an excuse for playing around with Firebase, Heroku and Flask).
+This repository contains the source code for the [Writeup Feed Filter](https://ctftime-writeups.herokuapp.com) mini-service, which is an online service for filtering the [CTFTime](https://ctftime.org/) writeups RSS feed. (It's also an excuse for playing around with Firebase, Heroku, Flask and Selenium).
 
 [CTFTime](https://ctftime.org/) is a website that contains information about Computer Security CTF (Capture the Flag) competitions: Dates, scoreboards, writeups (i.e. solutions) and so on. Once a competition is over, it's common to review other participants' writeups for the different challenges. One way to do this is by visiting CTFTime's CTF page for the given competition and reviewing the different writeups which were added for each challenge. However, using this method it's hard to identify new writeups, which keep getting added as time goes by. The alternative is to follow CTFTime's writeups RSS feed, but unfortunately it includes all the writeups for all the competitions and not just the ones the user might be interested in.
 
