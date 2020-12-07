@@ -25,8 +25,9 @@ class PageURIs(Enum):
 
 
 class TestBase(unittest.TestCase):
-    PORT = 5000
-    TIMEOUT = 4
+    PORT            = 5000
+    TIMEOUT         = 4
+    TIMEOUT_LONG    = 8
 
     @classmethod
     def getUrl(cls, page = ''):
@@ -50,60 +51,53 @@ class TestBase(unittest.TestCase):
         cls.app = main.create_app()
         cls.server = Process(target = cls.app.run, kwargs = {'port': cls.PORT})
         cls.server.start()
+        cls.setupBrowser()
         end = time.time()
         cls.logger.info(f"Setup f{cls.__name__} in {end - start} seconds")
 
     @classmethod
     def tearDownClass(cls):
         start = time.time()
+        cls.teardownBrowser()
         cls.server.terminate()
         cls.server.join()
         end = time.time()
         cls.logger.debug(f"Tore down f{cls.__name__} in {end - start} seconds")
 
     @classmethod
-    def login(cls, browser, username = None, password = None):
+    def login(cls, username = None, password = None):
         username = username or cls.username
         password = password or cls.password
 
-        browser.get(cls.getUrl(PageURIs.LOGIN.value))
+        cls.browser.get(cls.getUrl(PageURIs.LOGIN.value))
 
-        email_input = WebDriverWait(browser, cls.TIMEOUT).until(
+        email_input = WebDriverWait(cls.browser, cls.TIMEOUT).until(
             EC.presence_of_element_located((By.CLASS_NAME, "firebaseui-id-email"))
         )
         email_input.send_keys(username)
-        browser.find_element_by_css_selector('button.firebaseui-id-submit').click()
+        cls.browser.find_element_by_css_selector('button.firebaseui-id-submit').click()
 
-        password_input = WebDriverWait(browser, cls.TIMEOUT).until(
+        password_input = WebDriverWait(cls.browser, cls.TIMEOUT).until(
             EC.presence_of_element_located((By.CLASS_NAME, "firebaseui-id-password"))
         )
         password_input.send_keys(password)
-        browser.find_element_by_css_selector('button.firebaseui-id-submit').click()
+        cls.browser.find_element_by_css_selector('button.firebaseui-id-submit').click()
 
         if username == cls.username and password == cls.password:
-            WebDriverWait(browser, cls.TIMEOUT).until(EC.url_to_be(cls.getUrl(PageURIs.FILTER.value)))
+            WebDriverWait(cls.browser, cls.TIMEOUT).until(EC.url_to_be(cls.getUrl(PageURIs.FILTER.value)))
 
-
-    def setupBrowser(self):
+    @classmethod
+    def setupBrowser(cls):
         options = Options()
         options.headless = True
-        self.browser = webdriver.Firefox(options=options, executable_path = GECKODRIVER_PATH)
-        self.addCleanup(self.browser.quit)
+        cls.browser = webdriver.Firefox(options=options, executable_path = GECKODRIVER_PATH)
 
-    def teardownBrowser(self):
-        self.browser.close()
+    @classmethod
+    def teardownBrowser(cls):
+        cls.browser.quit()
 
 
 class TestLoggedOut(TestBase):
-         
-    def setUp(self):
-        super().setUp()
-        self.setupBrowser()
-
-    def tearDown(self):
-        super().tearDown()
-        self.teardownBrowser()
-    
 
     def testHomeTitle(self):
         self.browser.get(self.getUrl(PageURIs.INDEX.value))
@@ -129,30 +123,57 @@ class TestLoggedOut(TestBase):
         self.browser.get(self.getUrl(PageURIs.TOS.value))
         self.assertIn('Terms & Conditions', self.browser.title)
 
+    
+
+class TestLogin(TestBase):
     def testLogin(self):
-        self.login(self.browser)
+        self.login()
         self.assertEqual('Filter the Writeups Feed', self.browser.find_element_by_tag_name('h1').get_attribute('textContent'))
 
     @unittest.skip("Avoid lockout due to multiple failed attempts")
     def testBadCredentials(self):
-        self.login(self.browser, self.username, self.password+self.password)
+        self.login(self.username, self.password+self.password)
         self.browser.implicitly_wait(3) # seconds
         self.browser.get(self.getUrl(PageURIs.LOGIN.value))
         try:
             WebDriverWait(self.browser, self.TIMEOUT).until(EC.url_to_be(self.getUrl(PageURIs.LOGIN.value)))
         except Exception:
             self.fail()
-
     
-class TestLoggedIn(TestBase):    
-    def setUp(self):
-        super().setUp()
-        self.setupBrowser()
-        self.login(self.browser)
+class TestLoggedInFilter(TestBase):
 
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.login()
+        
+    def setUp(self):
+        self.removeAllNames()
+        self.browser.get(self.getUrl(PageURIs.FILTER.value))
+    
+    def removeAllNames(self):
+        self.browser.get(self.getUrl(PageURIs.FILTER.value))
+        remove_buttons = self.browser.find_elements_by_class_name("remove_ctf_name")
+        for button in remove_buttons:
+            button.click()
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
+        WebDriverWait(self.browser, self.TIMEOUT).until(
+            EC.visibility_of_element_located((By.XPATH, "/html/body//main//div[@id='modal_success']//button"))).click()
+ 
     def testBasicLoggedIn(self):
         self.assertEqual('Filter the Writeups Feed', self.browser.find_element_by_tag_name('h1').get_attribute('textContent'))
         self.assertEqual(main.COOKIE_MENU_TYPE_LOGGED_IN, self.browser.get_cookie(main.COOKIE_MENU_TYPE)["value"])
+
+    def testAddName(self):
+        name = "MyCTF"
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "ctf_name_input")))
+        first_ctf_name_input = self.browser.find_elements(By.CLASS_NAME, 'ctf_name_input')[0]
+        first_ctf_name_input.send_keys(name)
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
+        self.browser.refresh()
+        WebDriverWait(self.browser, self.TIMEOUT_LONG).until(EC.visibility_of_element_located((By.CLASS_NAME, "ctf_name_input")))
+        first_ctf_name_input = self.browser.find_elements(By.CLASS_NAME, 'ctf_name_input')[0]
+        self.assertEqual(name, first_ctf_name_input.get_attribute("value"))
 
 
 
