@@ -38,6 +38,7 @@ pylint==2.6.0
 pytz==2020.4
 requests==2.25.0
 rsa==4.6
+selenium==3.141.0
 six==1.15.0
 toml==0.10.2
 uritemplate==3.0.1
