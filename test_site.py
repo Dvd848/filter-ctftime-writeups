@@ -9,6 +9,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import WebDriverException
 
 from pathlib import Path
 from multiprocessing import Process
@@ -89,7 +90,17 @@ class TestBase(unittest.TestCase):
     def setupBrowser(cls):
         options = Options()
         options.headless = True
-        cls.browser = webdriver.Firefox(options=options, executable_path = GECKODRIVER_PATH)
+
+        kwargs = {}
+        if GECKODRIVER_PATH.exists():
+            kwargs["executable_path"] = GECKODRIVER_PATH
+        
+        try:
+            cls.browser = webdriver.Firefox(options=options, **kwargs)
+        except WebDriverException as e:
+            if "geckodriver" in e.msg:
+                raise FileNotFoundError(
+                    f"This script has a dependency on geckodriver, please add it to the PATH or to {GECKODRIVER_PATH.absolute()}") from e
 
     @classmethod
     def teardownBrowser(cls):
