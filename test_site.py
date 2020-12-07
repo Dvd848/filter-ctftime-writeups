@@ -41,10 +41,11 @@ class TestBase(unittest.TestCase):
         cls.logger.setLevel(logging.DEBUG)
 
         try:
-            cls.username = os.environ['WFF_USERNAME']
-            cls.password = os.environ['WFF_PASSWORD']
+            cls.username = os.environ['WFF_TEST_USERNAME']
+            cls.password = os.environ['WFF_TEST_PASSWORD']
         except KeyError:
-            raise RuntimeError("Please set environment variables WFF_USERNAME, WFF_PASSWORD with valid test login credentials")
+            msg = "Please set environment variables WFF_TEST_USERNAME, WFF_TEST_PASSWORD with valid test login credentials"
+            raise RuntimeError(msg) from None
 
         cls.app = main.create_app()
         cls.server = Process(target = cls.app.run, kwargs = {'port': cls.PORT})
@@ -132,7 +133,15 @@ class TestLoggedOut(TestBase):
         self.login(self.browser)
         self.assertEqual('Filter the Writeups Feed', self.browser.find_element_by_tag_name('h1').get_attribute('textContent'))
 
-
+    @unittest.skip("Avoid lockout due to multiple failed attempts")
+    def testBadCredentials(self):
+        self.login(self.browser, self.username, self.password+self.password)
+        self.browser.implicitly_wait(3) # seconds
+        self.browser.get(self.getUrl(PageURIs.LOGIN.value))
+        try:
+            WebDriverWait(self.browser, self.TIMEOUT).until(EC.url_to_be(self.getUrl(PageURIs.LOGIN.value)))
+        except Exception:
+            self.fail()
 
     
 class TestLoggedIn(TestBase):    
