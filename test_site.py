@@ -48,10 +48,10 @@ class TestBase(unittest.TestCase):
             msg = "Please set environment variables WFF_TEST_USERNAME, WFF_TEST_PASSWORD with valid test login credentials"
             raise RuntimeError(msg) from None
 
+        cls.setupBrowser()
         cls.app = main.create_app()
         cls.server = Process(target = cls.app.run, kwargs = {'port': cls.PORT})
         cls.server.start()
-        cls.setupBrowser()
         end = time.time()
         cls.logger.info(f"Setup f{cls.__name__} in {end - start} seconds")
 
@@ -98,9 +98,12 @@ class TestBase(unittest.TestCase):
         try:
             cls.browser = webdriver.Firefox(options=options, **kwargs)
         except WebDriverException as e:
-            if "geckodriver" in e.msg:
+            print(f"ERROR: {str(e)}\n")
+            if "geckodriver" in str(e):
                 raise FileNotFoundError(
                     f"This script has a dependency on geckodriver, please add it to the PATH or to {GECKODRIVER_PATH.absolute()}") from e
+            else:
+                raise e
 
     @classmethod
     def teardownBrowser(cls):
@@ -180,7 +183,8 @@ class TestLoggedInFilter(TestBase):
         WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button"))).click()
         WebDriverWait(self.browser, self.TIMEOUT).until(
             EC.visibility_of_element_located((By.XPATH, "/html/body//main//div[@id='modal_success']//button"))).click()
-        WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button")))
+        #WebDriverWait(self.browser, self.TIMEOUT).until(EC.element_to_be_clickable((By.ID, "save_button")))
+        WebDriverWait(self.browser, self.TIMEOUT).until(EC.invisibility_of_element_located((By.CLASS_NAME, "modal-backdrop")))
 
     def removeAllNames(self):
         self.browser.get(self.getUrl(PageURIs.FILTER.value))
