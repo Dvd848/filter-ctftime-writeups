@@ -2,5 +2,6 @@ venv/
 .vscode/
 *.pyc
 private_key.json
+credentials.env
 geckodriver*
 tmp/
