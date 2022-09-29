@@ -12,3 +12,9 @@ This service allows users to define a list of CTF names which are of interest to
 The service is build in Python as a Flask website, and uses Firebase for authenticating users and storing data. It's hosted at Heroku.
 
 Suggestions, comments, issues and contributions are welcome.
+
+## Screenshots
+
+![](images/homepage.png)
+
+![](images/filter_page.png)
