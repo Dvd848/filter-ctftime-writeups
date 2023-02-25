@@ -89,7 +89,7 @@ class TestBase(unittest.TestCase):
     @classmethod
     def setupBrowser(cls):
         options = Options()
-        options.headless = True
+        options.add_argument("--headless")
 
         kwargs = {}
         if GECKODRIVER_PATH.exists():
