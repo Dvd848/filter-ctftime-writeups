@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.8.10-slim-buster
+FROM python:3.13.4-slim-bookworm
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir /geckodriver
 
-RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.31.0/geckodriver-v0.31.0-linux64.tar.gz -O /geckodriver/geckodriver.tar.gz
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.36.0/geckodriver-v0.36.0-linux64.tar.gz -O /geckodriver/geckodriver.tar.gz
 
 RUN tar -xvf /geckodriver/geckodriver.tar.gz --directory=/geckodriver
 
